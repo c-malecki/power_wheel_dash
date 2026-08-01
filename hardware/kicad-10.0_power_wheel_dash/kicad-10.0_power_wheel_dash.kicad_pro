@@ -8,7 +8,7 @@
       "internal_id": "",
       "mfg": "",
       "mpn": "",
-      "sch_revision": ""
+      "sch_revision": "1A"
     },
     "layer_pairs": [],
     "layer_presets": [],
@@ -256,7 +256,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "ride_on.kicad_pro",
+    "filename": "kicad-10.0_power_wheel_dash.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -411,12 +411,12 @@
     "subpart_id_separator": 0,
     "top_level_sheets": [
       {
-        "filename": "ride_on.kicad_sch",
+        "filename": "kicad-10.0_power_wheel_dash.kicad_sch",
         "name": "Root",
         "uuid": "6004b368-548f-4be6-9656-3372cb9c9fc9"
       }
     ],
-    "used_designators": "R1-8,LS1-2,#PWR1-18,BT1,C1-3,D1-6,J1-3,U1-6",
+    "used_designators": "R1-8,LS1-2,#PWR1-25,BT1,C1-4,D1-8,J1-3,U1-6",
     "variants": []
   },
   "sheets": [
