@@ -9,9 +9,6 @@
 
 #define MSD_CS_PIN 14
 
-#define LED_HEADLIGHT_OE_PIN 1
-#define LED_HEADLIGHT_DATA_PIN 2
-
 #define LED_BODY_OE_PIN 41
 #define LED_BODY_DATA_PIN 42
 
