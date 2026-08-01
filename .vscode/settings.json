@@ -1,0 +1,10 @@
+{
+  "idf.currentSetup": "${env:HOME}/.espressif/v6.0.1/esp-idf",
+  "clangd.path": "${env:HOME}/.espressif/tools/esp-clang/esp-20.1.1_20250829/esp-clang/bin/clangd",
+  "clangd.arguments": [
+    "--background-index",
+    "--query-driver=**",
+    "--compile-commands-dir=${env:HOME}/Projects/power_wheel_dash/build"
+  ],
+  "editor.formatOnSave": true
+}
