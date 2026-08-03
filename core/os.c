@@ -1,8 +1,12 @@
 #include "os.h"
+#include "config.h"
 #include "display.h"
+#include "light.h"
 
-esp_err_t OS_Init(OS_t *OS) {
-  OS->current_screen = OS_SCREEN_HOME;
+static State_t state;
+
+esp_err_t OS_Init(void) {
+  state.screens_current = STATE_SCREEN_HOME;
 
   spi_bus_config_t buscfg = {
       .sclk_io_num = SPI_CLK_PIN,
@@ -22,21 +26,11 @@ esp_err_t OS_Init(OS_t *OS) {
     return err;
   }
 
-  Home_Screen_Create();
+  lv_obj_clean(lv_scr_act());
+
+  Display_Navigate(UI_SCREEN_ID_HOME);
 
   Display_Control_TaskRun();
 
-  return Light_Control_Init(&OS->lights);
-}
-
-void OS_SetScreen(OS_Screens screen) {
-  switch (screen) {
-  case OS_SCREEN_HOME:
-    Home_Screen_Create();
-    break;
-
-  case OS_SCREEN_LIGHTS:
-
-    break;
-  }
+  return Light_Init();
 }

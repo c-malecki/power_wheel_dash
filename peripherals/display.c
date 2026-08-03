@@ -1,4 +1,7 @@
 #include "display.h"
+#include "core/lv_event.h"
+#include "core/lv_obj.h"
+#include "ui.h"
 
 /* */
 
@@ -8,9 +11,18 @@ static esp_lcd_panel_handle_t panel_handle = NULL;
 static esp_lcd_touch_handle_t touch_handle = NULL;
 static lv_indev_drv_t indev_drv;
 
-/* */
+// layouts
 
-static void icon_touch_event_cb(lv_event_t *event);
+static const int16_t col_dsc_3x2[] = {LV_GRID_FR(1), LV_GRID_FR(1),
+                                      LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
+static const int16_t row_dsc_3x2[] = {LV_GRID_FR(1), LV_GRID_FR(1),
+                                      LV_GRID_TEMPLATE_LAST};
+
+lv_obj_t *create_button(lv_obj_t *parent, lv_color_t color, const char *symbol,
+                        const char *name, UI_Screen_IDs navigate_screen_id);
+void create_screen(const UI_Screen_t *new_screen);
+
+/* */
 
 esp_err_t init_panel(void);
 esp_err_t init_touch(void);
@@ -25,7 +37,7 @@ static void display_task(void *arg) {
 
 /* PRIMARY FUNCTIONS */
 
-esp_err_t Display_Control_Init(void) {
+esp_err_t Display_Control_Init() {
   esp_err_t err = init_panel();
   if (err != ESP_OK) {
     return err;
@@ -48,32 +60,30 @@ void Display_Control_TaskRun(void) {
   xTaskCreatePinnedToCore(display_task, "display task", 4096, NULL, 5, NULL, 1);
 }
 
-lv_obj_t *Display_CreateIcon(lv_obj_t *parent, lv_color_t color,
-                             const char *symbol, const char *name) {
-  lv_obj_t *btn = lv_btn_create(parent);
-  lv_obj_set_size(btn, 70, 70);
-  lv_obj_set_style_radius(btn, LV_RADIUS_CIRCLE, 0);
-  lv_obj_set_style_bg_color(btn, color, 0);
-  lv_obj_add_event_cb(btn, icon_touch_event_cb, LV_EVENT_CLICKED, (void *)name);
+void Display_Navigate(UI_Screen_IDs ui_screen_id) {
+  switch (ui_screen_id) {
+  case UI_SCREEN_ID_HOME:
+    create_screen(&screens_home);
+    break;
 
-  lv_obj_t *label = lv_label_create(btn);
-  lv_label_set_text(label, symbol);
-  lv_obj_set_style_text_color(label, lv_color_white(), 0);
-  lv_obj_set_style_text_opa(label, LV_OPA_80, 0);
-  lv_obj_set_style_text_font(label, &lv_font_montserrat_28, 0);
-  // lv_label_set_text(label, name);
-  lv_obj_center(label);
-
-  return btn;
+  case UI_SCREEN_ID_LIGHT_CONTROL:
+    create_screen(&screens_light_control);
+    break;
+  }
 }
 
 /* CALLBACKS */
 
-static void icon_touch_event_cb(lv_event_t *event) {
-  const char *name = (const char *)lv_event_get_user_data(event);
-  ESP_LOGI("BTN", "%s pressed", name);
-  // TODO: lv_scr_load_anim(target_screen, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300, 0,
-  // false);
+static void button_touch_event_cb(lv_event_t *event) {
+  lv_event_code_t code = lv_event_get_code(event);
+  if (code == LV_EVENT_CLICKED) {
+    lv_obj_t *btn = lv_event_get_target(event);
+
+    UI_Screen_IDs target_screen =
+        (UI_Screen_IDs)(uintptr_t)lv_obj_get_user_data(btn);
+
+    Display_Navigate((UI_Screen_IDs)target_screen);
+  }
 }
 
 static void lvgl_tick_cb(void *arg) { lv_tick_inc(2); }
@@ -231,4 +241,75 @@ void init_lvgl(void) {
   ESP_ERROR_CHECK(esp_timer_create(&lvgl_tick_timer_args, &lvgl_tick_timer));
 
   ESP_ERROR_CHECK(esp_timer_start_periodic(lvgl_tick_timer, 2000));
+}
+
+/* */
+
+lv_obj_t *create_button(lv_obj_t *parent, lv_color_t color, const char *symbol,
+                        const char *name, UI_Screen_IDs navigate_screen_id) {
+
+  lv_obj_t *btn = lv_btn_create(parent);
+
+  lv_obj_set_size(btn, 70, 70);
+  lv_obj_set_style_radius(btn, LV_RADIUS_CIRCLE, 0);
+  lv_obj_set_style_bg_color(btn, color, 0);
+
+  lv_obj_add_event_cb(btn, button_touch_event_cb, LV_EVENT_CLICKED,
+                      (void *)name);
+
+  lv_obj_t *label = lv_label_create(btn);
+
+  if (symbol != NULL && (uintptr_t)symbol > 0xFFFF) {
+    lv_label_set_text(label, symbol);
+  } else {
+    lv_label_set_text(label, "?");
+  }
+
+  lv_obj_set_style_text_color(label, lv_color_white(), 0);
+  lv_obj_set_style_text_opa(label, LV_OPA_80, 0);
+  lv_obj_set_style_text_font(label, &lv_font_montserrat_28, 0);
+  lv_obj_center(label);
+
+  lv_obj_set_user_data(btn, (void *)(uintptr_t)navigate_screen_id);
+
+  return btn;
+}
+
+void create_screen(const UI_Screen_t *target_screen) {
+  lv_obj_t *cur_screen = lv_scr_act();
+  lv_obj_clean(cur_screen);
+
+  lv_obj_t *container = lv_obj_create(cur_screen);
+  lv_obj_set_size(container, 320, 240);
+  lv_obj_set_layout(container, LV_LAYOUT_GRID);
+
+  switch (target_screen->layout) {
+  case UI_SCREEN_LAYOUT_3x1:
+    lv_obj_set_grid_dsc_array(container, col_dsc_3x2, row_dsc_3x2);
+    break;
+
+  case UI_SCREEN_LAYOUT_3x2:
+    lv_obj_set_grid_dsc_array(container, col_dsc_3x2, row_dsc_3x2);
+    break;
+  }
+
+  lv_obj_set_grid_dsc_array(container, col_dsc_3x2, row_dsc_3x2);
+
+  lv_obj_set_style_flex_main_place(cur_screen, LV_FLEX_ALIGN_CENTER, 0);
+  lv_obj_set_style_flex_cross_place(cur_screen, LV_FLEX_ALIGN_CENTER, 0);
+  lv_obj_set_style_flex_track_place(cur_screen, LV_FLEX_ALIGN_CENTER, 0);
+  lv_obj_set_style_pad_row(cur_screen, 8, 0);
+
+  for (int i = 0; i < target_screen->buttons_total; i++) {
+    lv_obj_t *button = create_button(
+        container, lv_color_hex(target_screen->buttons[i].background_color),
+        target_screen->buttons[i].icon_symbol,
+        target_screen->buttons[i].touch_event_name,
+        target_screen->buttons[i].navigate_screen_id);
+    lv_obj_set_grid_cell(
+        button, LV_GRID_ALIGN_CENTER, target_screen->buttons[i].col_pos, 1,
+        LV_GRID_ALIGN_CENTER, target_screen->buttons[i].row_pos, 1);
+  }
+
+  lv_scr_load(cur_screen);
 }

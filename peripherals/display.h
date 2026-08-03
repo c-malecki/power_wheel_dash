@@ -16,6 +16,11 @@
 #include <stdio.h>
 #include "config.h"
 #include "esp_timer.h"
+#include "state.h"
+#include "ui.h"
+#include "home.h"
+#include "light_control.h"
+
 //
 
 #define DISPLAY_LCD_DC_PIN (8)
@@ -26,10 +31,8 @@
 #define DISPLAY_LCD_T_IRQ_PIN (16)
 #define DISPLAY_LCD_T_CS_PIN (17)
 
-esp_err_t Display_Control_Init(void);
+esp_err_t Display_Control_Init();
 void Display_Control_TaskRun(void);
-
-lv_obj_t *Display_CreateIcon(lv_obj_t *parent, lv_color_t color, const char *symbol,
-                             const char *name);
+void Display_Navigate(UI_Screen_IDs ui_screen_id);
 
 #endif // __DISPLAY_H_

@@ -52,7 +52,7 @@ extern const Light_Color_t light_color_green;
 extern const Light_Color_t light_color_blue;
 extern const Light_Color_t light_color_purple;
 
-esp_err_t Light_Control_Init(Light_Control_t *ctrl);
+esp_err_t Light_Init(void);
 
 void Light_SetColor(Light_Sections section, Light_Color_t color);
 
