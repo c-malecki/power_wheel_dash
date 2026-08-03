@@ -1,0 +1,408 @@
+#ifndef __DISPLAY_H_
+#define __DISPLAY_H_
+
+#include "driver/gpio.h"
+#include "driver/spi_master.h"
+#include "esp_lcd_ili9341.h"
+#include "esp_lcd_panel_io.h"
+#include "esp_lcd_panel_ops.h"
+#include "esp_lcd_panel_vendor.h"
+#include "esp_err.h"
+#include "esp_lcd_touch_xpt2046.h"
+#include "esp_log.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "lvgl.h"
+#include <stdio.h>
+#include "config.h"
+#include "home_screen.h"
+
+#define DISPLAY_LCD_DC_PIN (8)
+#define DISPLAY_LCD_RST_PIN (9)
+#define DISPLAY_LCD_CS_PIN (10)
+#define DISPLAY_LCD_LED_PIN (18)
+
+#define DISPLAY_LCD_T_IRQ_PIN (16)
+#define DISPLAY_LCD_T_CS_PIN (17)
+
+typedef enum {
+    DISPLAY_SCREEN_HOME = 0,
+    DISPLAY_SCREEN_LIGHTS,
+} Display_Screens;
+
+typedef struct
+{
+    Display_Screens current_screen;
+} Display_Control_t;
+
+esp_err_t Display_Control_Init(Display_Control_t *ctrl);
+
+esp_lcd_touch_handle_t Display_GetTouchHandle(void);
+
+esp_err_t Display_SetScreen(Display_Screens screen);
+
+#endif // __DISPLAY_H_
+
+#include "display.h"
+
+/* */
+
+static esp_lcd_panel_io_handle_t io_handle = NULL;
+static esp_lcd_panel_handle_t panel_handle = NULL;
+
+static esp_lcd_touch_handle_t touch_handle = NULL;
+static lv_indev_drv_t indev_drv;
+
+/* */
+
+static void lvgl_tick_cb(void *arg) { lv_tick_inc(2); }
+
+static bool flush_ready_cb(esp_lcd_panel_io_handle_t panel_io,
+                           esp_lcd_panel_io_event_data_t *edata,
+                           void *user_ctx) {
+  lv_disp_drv_t *disp_driver = (lv_disp_drv_t *)user_ctx;
+  lv_disp_flush_ready(disp_driver);
+  return false;
+}
+
+static void flush_exec_cb(lv_disp_drv_t *drv, const lv_area_t *area,
+                          lv_color_t *color_map) {
+  esp_lcd_panel_handle_t panel = (esp_lcd_panel_handle_t)drv->user_data;
+  esp_lcd_panel_draw_bitmap(panel, area->x1, area->y1, area->x2 + 1,
+                            area->y2 + 1, color_map);
+}
+
+static void touchpad_read_cb(lv_indev_drv_t *drv, lv_indev_data_t *data) {
+  ESP_LOGI("TOUCH", "read_cb called");
+  esp_lcd_touch_point_data_t point;
+  uint8_t point_count = 0;
+
+  esp_err_t err = esp_lcd_touch_read_data(touch_handle);
+  if (err != ESP_OK) {
+    ESP_LOGW("TOUCH", "read_data failed: %s", esp_err_to_name(err));
+    data->state = LV_INDEV_STATE_RELEASED;
+    return;
+  }
+
+  bool pressed =
+      esp_lcd_touch_get_data(touch_handle, &point, &point_count, 1) == ESP_OK &&
+      point_count > 0;
+  if (pressed) {
+    data->point.x = point.x;
+    data->point.y = point.y;
+    data->state = LV_INDEV_STATE_PRESSED;
+  } else {
+    data->state = LV_INDEV_STATE_RELEASED;
+  }
+}
+
+void display_task(void *arg) {
+  while (1) {
+    vTaskDelay(pdMS_TO_TICKS(10));
+    lv_timer_handler();
+  }
+}
+
+/* */
+
+esp_err_t init_panel(void) {
+  gpio_config_t bk_gpio_config = {
+      .mode = GPIO_MODE_OUTPUT, .pin_bit_mask = (1ULL << DISPLAY_LCD_LED_PIN)};
+  esp_err_t err = gpio_config(&bk_gpio_config);
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  err = gpio_set_level(DISPLAY_LCD_LED_PIN, 1);
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  esp_lcd_panel_io_spi_config_t io_config = {
+      .dc_gpio_num = DISPLAY_LCD_DC_PIN,
+      .cs_gpio_num = DISPLAY_LCD_CS_PIN,
+      .pclk_hz = 20 * 1000 * 1000,
+      .lcd_cmd_bits = 8,
+      .lcd_param_bits = 8,
+      .spi_mode = 0,
+      .trans_queue_depth = 10,
+  };
+  err = esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)SPI_HOST_PIN,
+                                 &io_config, &io_handle);
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  esp_lcd_panel_dev_config_t panel_config = {
+      .reset_gpio_num = DISPLAY_LCD_RST_PIN,
+      .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_BGR,
+      .bits_per_pixel = 16,
+  };
+
+  err = esp_lcd_new_panel_ili9341(io_handle, &panel_config, &panel_handle);
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  err = esp_lcd_panel_reset(panel_handle);
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  err = esp_lcd_panel_init(panel_handle);
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  err = esp_lcd_panel_swap_xy(panel_handle, true);
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  return esp_lcd_panel_disp_on_off(panel_handle, true);
+}
+
+esp_err_t init_touch(void) {
+  esp_lcd_panel_io_handle_t touch_io_handle = NULL;
+  esp_lcd_panel_io_spi_config_t touch_io_config =
+      ESP_LCD_TOUCH_IO_SPI_XPT2046_CONFIG(DISPLAY_LCD_T_CS_PIN);
+  ESP_ERROR_CHECK(
+      esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)SPI_HOST_PIN,
+                               &touch_io_config, &touch_io_handle));
+
+  esp_lcd_touch_config_t touch_config = {
+      .x_max = 240,
+      .y_max = 320,
+      .rst_gpio_num = GPIO_NUM_NC,
+      .int_gpio_num = DISPLAY_LCD_T_IRQ_PIN,
+      .flags =
+          {
+              .swap_xy = 1,
+              .mirror_x = 0,
+              .mirror_y = 0,
+          },
+  };
+
+  return esp_lcd_touch_new_spi_xpt2046(touch_io_handle, &touch_config,
+                                       &touch_handle);
+}
+
+void init_lvgl(void) {
+  lv_init();
+  static lv_disp_draw_buf_t draw_buf;
+  static lv_color_t buf1[320 * 20];
+  lv_disp_draw_buf_init(&draw_buf, buf1, NULL, 320 * 20);
+
+  static lv_disp_drv_t disp_drv;
+  lv_disp_drv_init(&disp_drv);
+  disp_drv.hor_res = 320;
+  disp_drv.ver_res = 240;
+  disp_drv.flush_cb = flush_exec_cb;
+  disp_drv.draw_buf = &draw_buf;
+  disp_drv.user_data = panel_handle;
+  lv_disp_drv_register(&disp_drv);
+
+  esp_lcd_panel_io_callbacks_t iccbs = {.on_color_trans_done = flush_ready_cb};
+  esp_lcd_panel_io_register_event_callbacks(io_handle, &iccbs, &disp_drv);
+
+  lv_indev_drv_init(&indev_drv);
+  indev_drv.type = LV_INDEV_TYPE_POINTER;
+  indev_drv.read_cb = touchpad_read_cb;
+  lv_indev_drv_register(&indev_drv);
+  ESP_LOGI("TOUCH", "indev registered, touch_handle=%p", touch_handle);
+}
+
+esp_err_t Display_Control_Init(Display_Control_t *ctrl) {
+  ctrl->current_screen = DISPLAY_SCREEN_HOME;
+
+  esp_err_t err = init_panel();
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  err = init_touch();
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  init_lvgl();
+
+  lv_obj_t *screen = lv_obj_create(NULL);
+  lv_obj_set_style_bg_color(screen, lv_color_hex(0x1a1a1a), 0);
+
+  xTaskCreatePinnedToCore(display_task, "display task", 4096, NULL, 5, NULL, 1);
+
+  Home_Screen_Create();
+
+  return ESP_OK;
+}
+
+esp_lcd_touch_handle_t Display_GetTouchHandle(void) { return touch_handle; }
+
+esp_err_t Display_SetScreen(Display_Screens screen);
+
+#ifndef __HOME_H_
+#define __HOME_H_
+
+#include "lvgl.h"
+#include "ui.h"
+#include <stdint.h>
+
+typedef enum {
+    HOMESCREEN_BUTTON_LIGHT,
+    HOMESCREEN_BUTTON_SOUND,
+    HOMESCREEN_BUTTON_SETTINGS,
+    HOMESCREEN_BUTTON_PLACEHOLDER1,
+    HOMESCREEN_BUTTON_PLACEHOLDER2,
+    HOMESCREEN_BUTTON_PLACEHOLDER3,
+} Homescreen_Buttons;
+
+typedef struct
+{
+    uint32_t background_color;
+    char *icon_symbol;
+    char *btn_name;
+} Homescreen_Button_t;
+
+void Home_Screen_Create(void);
+
+#endif // __HOME_H_
+
+#include "home_screen.h"
+
+static Homescreen_Button_t const btn_light = {
+    .background_color = (0xFFC107),
+    .icon_symbol = LV_SYMBOL_POWER,
+    .btn_name = "Lights",
+};
+
+static Homescreen_Button_t const btn_sound = {
+    .background_color = (0x2196F3),
+    .icon_symbol = LV_SYMBOL_AUDIO,
+    .btn_name = "Sound",
+};
+
+static Homescreen_Button_t const btn_settings = {
+    .background_color = (0x607D8B),
+    .icon_symbol = LV_SYMBOL_SETTINGS,
+    .btn_name = "Settings",
+};
+
+void Home_Screen_Create(void) {
+  lv_obj_t *screen = lv_scr_act();
+
+  static const int16_t col_dsc[] = {LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1),
+                                    LV_GRID_TEMPLATE_LAST};
+  static const int16_t row_dsc[] = {LV_GRID_FR(1), LV_GRID_FR(1),
+                                    LV_GRID_TEMPLATE_LAST};
+
+  lv_obj_t *container = lv_obj_create(screen);
+  lv_obj_set_size(container, 320, 240);
+  lv_obj_set_layout(container, LV_LAYOUT_GRID);
+  lv_obj_set_grid_dsc_array(container, col_dsc, row_dsc);
+
+  lv_obj_set_style_flex_main_place(screen, LV_FLEX_ALIGN_CENTER, 0);
+  lv_obj_set_style_flex_cross_place(screen, LV_FLEX_ALIGN_CENTER, 0);
+  lv_obj_set_style_flex_track_place(screen, LV_FLEX_ALIGN_CENTER, 0);
+  lv_obj_set_style_pad_row(screen, 8, 0);
+
+  lv_obj_t *lights =
+      UI_CreateIcon(container, lv_color_hex(btn_light.background_color),
+                    btn_light.icon_symbol, btn_light.btn_name);
+  lv_obj_set_grid_cell(lights, LV_GRID_ALIGN_CENTER, 0, 1, LV_GRID_ALIGN_CENTER,
+                       0, 1);
+
+  lv_obj_t *sound =
+      UI_CreateIcon(container, lv_color_hex(btn_sound.background_color),
+                    btn_sound.icon_symbol, btn_sound.btn_name);
+  lv_obj_set_grid_cell(sound, LV_GRID_ALIGN_CENTER, 1, 1, LV_GRID_ALIGN_CENTER,
+                       0, 1);
+
+  lv_obj_t *settings =
+      UI_CreateIcon(container, lv_color_hex(btn_settings.background_color),
+                    btn_settings.icon_symbol, btn_settings.btn_name);
+  lv_obj_set_grid_cell(settings, LV_GRID_ALIGN_CENTER, 2, 1,
+                       LV_GRID_ALIGN_CENTER, 0, 1);
+
+  lv_obj_t *ph1 =
+      UI_CreateIcon(container, lv_color_hex(btn_settings.background_color),
+                    btn_settings.icon_symbol, btn_settings.btn_name);
+  lv_obj_set_grid_cell(ph1, LV_GRID_ALIGN_CENTER, 0, 1, LV_GRID_ALIGN_CENTER, 1,
+                       1);
+
+  lv_obj_t *ph2 =
+      UI_CreateIcon(container, lv_color_hex(btn_settings.background_color),
+                    btn_settings.icon_symbol, btn_settings.btn_name);
+  lv_obj_set_grid_cell(ph2, LV_GRID_ALIGN_CENTER, 1, 1, LV_GRID_ALIGN_CENTER, 1,
+                       1);
+
+  lv_obj_t *ph3 =
+      UI_CreateIcon(container, lv_color_hex(btn_settings.background_color),
+                    btn_settings.icon_symbol, btn_settings.btn_name);
+  lv_obj_set_grid_cell(ph3, LV_GRID_ALIGN_CENTER, 2, 1, LV_GRID_ALIGN_CENTER, 1,
+                       1);
+
+  //
+
+  // lv_obj_set_size(container, 320, 240);
+  // lv_obj_clear_flag(container, LV_OBJ_FLAG_SCROLLABLE);
+  // lv_obj_set_style_pad_all(container, 0, 0);
+  // lv_obj_center(container);
+  // lv_obj_set_style_border_width(container, 0, 0);
+  // lv_obj_set_style_border_color(container, lv_color_hex(0x000000), 0);
+  // lv_obj_set_flex_flow(container, LV_FLEX_FLOW_ROW_WRAP);
+  // lv_obj_set_flex_align(container, LV_FLEX_ALIGN_SPACE_EVENLY,
+  //                       LV_FLEX_ALIGN_SPACE_EVENLY, LV_FLEX_ALIGN_CENTER);
+
+  // UI_CreateIcon(container, lv_color_hex(0xFFC107), LV_SYMBOL_POWER,
+  // "Lights"); UI_CreateIcon(container, lv_color_hex(0x2196F3),
+  // LV_SYMBOL_AUDIO, "Music"); UI_CreateIcon(container, lv_color_hex(0x607D8B),
+  // LV_SYMBOL_SETTINGS,
+  //               "Settings");
+
+  // UI_CreateIcon(container, lv_color_hex(0xE91E63), LV_SYMBOL_HOME, "PH1");
+  // UI_CreateIcon(container, lv_color_hex(0x4CAF50), LV_SYMBOL_HOME,
+  //               "PH2");
+  // UI_CreateIcon(container, lv_color_hex(0x9C27B0), LV_SYMBOL_HOME,
+  //               "PH3");
+
+  lv_scr_load(screen);
+}
+
+#ifndef __UI_H_
+#define __UI_H_
+
+#include "esp_log.h"
+#include "lvgl.h"
+
+lv_obj_t *UI_CreateIcon(lv_obj_t *parent, lv_color_t color, const char *symbol, const char *name);
+
+#endif // __UI_H_
+
+#include "ui.h"
+
+static void icon_touch_event_cb(lv_event_t *event) {
+  const char *name = (const char *)lv_event_get_user_data(event);
+  ESP_LOGI("BTN", "%s pressed", name);
+  // TODO: lv_scr_load_anim(target_screen, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300, 0,
+  // false);
+}
+
+lv_obj_t *UI_CreateIcon(lv_obj_t *parent, lv_color_t color, const char *symbol,
+                        const char *name) {
+  lv_obj_t *btn = lv_btn_create(parent);
+  lv_obj_set_size(btn, 70, 70);
+  lv_obj_set_style_radius(btn, LV_RADIUS_CIRCLE, 0);
+  lv_obj_set_style_bg_color(btn, color, 0);
+  lv_obj_add_event_cb(btn, icon_touch_event_cb, LV_EVENT_CLICKED, (void *)name);
+
+  lv_obj_t *label = lv_label_create(btn);
+  lv_label_set_text(label, symbol);
+  lv_obj_set_style_text_color(label, lv_color_white(), 0);
+  lv_obj_set_style_text_opa(label, LV_OPA_80, 0);
+  lv_obj_set_style_text_font(label, &lv_font_montserrat_28, 0);
+  // lv_label_set_text(label, name);
+  lv_obj_center(label);
+
+  return btn;
+}

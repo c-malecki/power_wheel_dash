@@ -10,6 +10,8 @@ static lv_indev_drv_t indev_drv;
 
 /* */
 
+static void lvgl_tick_cb(void *arg) { lv_tick_inc(2); }
+
 static bool flush_ready_cb(esp_lcd_panel_io_handle_t panel_io,
                            esp_lcd_panel_io_event_data_t *edata,
                            void *user_ctx) {
@@ -26,7 +28,6 @@ static void flush_exec_cb(lv_disp_drv_t *drv, const lv_area_t *area,
 }
 
 static void touchpad_read_cb(lv_indev_drv_t *drv, lv_indev_data_t *data) {
-  ESP_LOGI("TOUCH", "read_cb called");
   esp_lcd_touch_point_data_t point;
   uint8_t point_count = 0;
 
@@ -49,21 +50,27 @@ static void touchpad_read_cb(lv_indev_drv_t *drv, lv_indev_data_t *data) {
   }
 }
 
-esp_err_t Display_Init(void) {
-  gpio_config_t bk_gpio_config = {.mode = GPIO_MODE_OUTPUT,
-                                  .pin_bit_mask = 1ULL << DISPLAY_LCD_LED_PIN};
-  gpio_config(&bk_gpio_config);
-  gpio_set_level(DISPLAY_LCD_LED_PIN, 1);
+void display_task(void *arg) {
+  while (1) {
+    vTaskDelay(pdMS_TO_TICKS(10));
+    lv_timer_handler();
+  }
+}
 
-  spi_bus_config_t buscfg = {
-      .sclk_io_num = SPI_CLK_PIN,
-      .mosi_io_num = SPI_MOSI_PIN,
-      .miso_io_num = SPI_MISO_PIN,
-      .quadwp_io_num = -1,
-      .quadhd_io_num = -1,
-      .max_transfer_sz = 240 * 320 * sizeof(uint16_t),
-  };
-  ESP_ERROR_CHECK(spi_bus_initialize(SPI_HOST_PIN, &buscfg, SPI_DMA_CH_AUTO));
+/* */
+
+esp_err_t init_panel(void) {
+  gpio_config_t bk_gpio_config = {
+      .mode = GPIO_MODE_OUTPUT, .pin_bit_mask = (1ULL << DISPLAY_LCD_LED_PIN)};
+  esp_err_t err = gpio_config(&bk_gpio_config);
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  err = gpio_set_level(DISPLAY_LCD_LED_PIN, 1);
+  if (err != ESP_OK) {
+    return err;
+  }
 
   esp_lcd_panel_io_spi_config_t io_config = {
       .dc_gpio_num = DISPLAY_LCD_DC_PIN,
@@ -74,22 +81,42 @@ esp_err_t Display_Init(void) {
       .spi_mode = 0,
       .trans_queue_depth = 10,
   };
-  ESP_ERROR_CHECK(esp_lcd_new_panel_io_spi(
-      (esp_lcd_spi_bus_handle_t)SPI_HOST_PIN, &io_config, &io_handle));
+  err = esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)SPI_HOST_PIN,
+                                 &io_config, &io_handle);
+  if (err != ESP_OK) {
+    return err;
+  }
 
   esp_lcd_panel_dev_config_t panel_config = {
       .reset_gpio_num = DISPLAY_LCD_RST_PIN,
       .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_BGR,
       .bits_per_pixel = 16,
   };
-  ESP_ERROR_CHECK(
-      esp_lcd_new_panel_ili9341(io_handle, &panel_config, &panel_handle));
-  esp_lcd_panel_reset(panel_handle);
-  esp_lcd_panel_init(panel_handle);
-  esp_lcd_panel_swap_xy(panel_handle, true);
-  esp_lcd_panel_disp_on_off(panel_handle, true);
 
-  // touch setup
+  err = esp_lcd_new_panel_ili9341(io_handle, &panel_config, &panel_handle);
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  err = esp_lcd_panel_reset(panel_handle);
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  err = esp_lcd_panel_init(panel_handle);
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  err = esp_lcd_panel_swap_xy(panel_handle, true);
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  return esp_lcd_panel_disp_on_off(panel_handle, true);
+}
+
+esp_err_t init_touch(void) {
   esp_lcd_panel_io_handle_t touch_io_handle = NULL;
   esp_lcd_panel_io_spi_config_t touch_io_config =
       ESP_LCD_TOUCH_IO_SPI_XPT2046_CONFIG(DISPLAY_LCD_T_CS_PIN);
@@ -98,22 +125,23 @@ esp_err_t Display_Init(void) {
                                &touch_io_config, &touch_io_handle));
 
   esp_lcd_touch_config_t touch_config = {
-      .x_max = 240, // match your panel's native resolution, pre-swap
+      .x_max = 240,
       .y_max = 320,
       .rst_gpio_num = GPIO_NUM_NC,
       .int_gpio_num = DISPLAY_LCD_T_IRQ_PIN,
       .flags =
           {
-              .swap_xy = 1,  // match your display swap_xy setting
-              .mirror_x = 0, // tune to match display mirror settings
-              .mirror_y = 0,
+              .swap_xy = 1,
+              .mirror_x = 1,
+              .mirror_y = 1,
           },
   };
-  ESP_ERROR_CHECK(esp_lcd_touch_new_spi_xpt2046(touch_io_handle, &touch_config,
-                                                &touch_handle));
 
-  // end touch
+  return esp_lcd_touch_new_spi_xpt2046(touch_io_handle, &touch_config,
+                                       &touch_handle);
+}
 
+void init_lvgl(void) {
   lv_init();
   static lv_disp_draw_buf_t draw_buf;
   static lv_color_t buf1[320 * 20];
@@ -137,23 +165,43 @@ esp_err_t Display_Init(void) {
   lv_indev_drv_register(&indev_drv);
   ESP_LOGI("TOUCH", "indev registered, touch_handle=%p", touch_handle);
 
+  // 1. Define the timer configuration
+  const esp_timer_create_args_t lvgl_tick_timer_args = {
+      .callback = &lvgl_tick_cb, .name = "lvgl_tick"};
+
+  // 2. Create the timer handle
+  esp_timer_handle_t lvgl_tick_timer = NULL;
+  ESP_ERROR_CHECK(esp_timer_create(&lvgl_tick_timer_args, &lvgl_tick_timer));
+
+  // 3. Start the timer to run every 2ms (2000 microseconds)
+  ESP_ERROR_CHECK(esp_timer_start_periodic(lvgl_tick_timer, 2000));
+}
+
+esp_err_t Display_Control_Init(Display_Control_t *ctrl) {
+  ctrl->current_screen = DISPLAY_SCREEN_HOME;
+
+  esp_err_t err = init_panel();
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  err = init_touch();
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  init_lvgl();
+
   lv_obj_t *screen = lv_obj_create(NULL);
   lv_obj_set_style_bg_color(screen, lv_color_hex(0x1a1a1a), 0);
 
-  xTaskCreatePinnedToCore(Display_Task, "Display Task", 4096, NULL, 5, NULL, 1);
+  xTaskCreatePinnedToCore(display_task, "display task", 4096, NULL, 5, NULL, 1);
 
-  Home_Screen_Create(screen);
+  Home_Screen_Create();
 
   return ESP_OK;
 }
 
-void Display_Task(void *arg) {
-  while (1) {
-    vTaskDelay(pdMS_TO_TICKS(10));
-    lv_timer_handler();
-  }
-}
-
-/* */
-
 esp_lcd_touch_handle_t Display_GetTouchHandle(void) { return touch_handle; }
+
+esp_err_t Display_SetScreen(Display_Screens screen);

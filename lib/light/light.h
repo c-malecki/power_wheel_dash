@@ -4,17 +4,26 @@
 #include "esp_err.h"
 #include "led_strip.h"
 #include <stdint.h>
+#include <stdbool.h>
 
-#define LIGHT_HEADLIGHT_OE_PIN 1
-#define LIGHT_HEADLIGHT_DATA_PIN 2
+#define LIGHT_HEADLIGHT_L_OE_PIN (1)
+#define LIGHT_HEADLIGHT_L_DC_PIN (2)
 
-#define LIGHT_BODYLIGHT_OE_PIN 41
-#define LIGHT_BODYLIGHT_DATA_PIN 42
+#define LIGHT_HEADLIGHT_R_OE_PIN (41)
+#define LIGHT_HEADLIGHT_R_DC_PIN (42)
+
+#define LIGHT_HEADLIGHT_MAX_LEDS (8)
+
+#define LIGHT_BODYLIGHT_OE_PIN (39)
+#define LIGHT_BODYLIGHT_DC_PIN (38)
+
+#define LIGHT_BODYLIGHT_MAX_LEDS (16)
 
 typedef enum {
-    LIGHT_CTRL_HEADLIGHT = 0,
-    LIGHT_CTRL_BODYLIGHT
-} Light_Controllers;
+    LIGHT_SECTION_HL_L = 0,
+    LIGHT_SECTION_HL_R,
+    LIGHT_SECTION_BODY
+} Light_Sections;
 
 typedef struct
 {
@@ -25,20 +34,26 @@ typedef struct
 
 typedef struct
 {
-    led_strip_handle_t handle;
+    bool is_on;
     Light_Color_t color;
-    uint8_t total;
+    // animation?
+} Light_Section_t;
+
+typedef struct
+{
+    Light_Section_t headlight_l;
+    Light_Section_t headlight_r;
+    Light_Section_t bodylight;
 } Light_Control_t;
 
+extern const Light_Color_t light_color_none;
 extern const Light_Color_t light_color_red;
 extern const Light_Color_t light_color_green;
 extern const Light_Color_t light_color_blue;
 extern const Light_Color_t light_color_purple;
 
-esp_err_t Light_Init(void);
+esp_err_t Light_Control_Init(Light_Control_t *ctrl);
 
-void Light_Ctrl_SetColor(Light_Controllers ctrl, Light_Color_t color);
-
-void Headlight_SetColor(uint32_t index, Light_Color_t color);
+void Light_SetColor(Light_Sections section, Light_Color_t color);
 
 #endif // __LIGHT_H_
