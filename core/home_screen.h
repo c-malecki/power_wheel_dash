@@ -2,8 +2,8 @@
 #define __HOME_H_
 
 #include "lvgl.h"
-#include "ui.h"
 #include <stdint.h>
+#include "display.h"
 
 typedef enum {
     HOMESCREEN_BUTTON_LIGHT,

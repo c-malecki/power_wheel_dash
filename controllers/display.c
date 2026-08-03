@@ -10,6 +10,72 @@ static lv_indev_drv_t indev_drv;
 
 /* */
 
+static void icon_touch_event_cb(lv_event_t *event);
+
+esp_err_t init_panel(void);
+esp_err_t init_touch(void);
+void init_lvgl(void);
+
+static void display_task(void *arg) {
+  while (1) {
+    vTaskDelay(pdMS_TO_TICKS(10));
+    lv_timer_handler();
+  }
+}
+
+/* PRIMARY FUNCTIONS */
+
+esp_err_t Display_Control_Init(void) {
+  esp_err_t err = init_panel();
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  err = init_touch();
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  init_lvgl();
+
+  lv_obj_t *screen = lv_obj_create(NULL);
+  lv_obj_set_style_bg_color(screen, lv_color_hex(0x1a1a1a), 0);
+
+  return ESP_OK;
+}
+
+void Display_Control_TaskRun(void) {
+  xTaskCreatePinnedToCore(display_task, "display task", 4096, NULL, 5, NULL, 1);
+}
+
+lv_obj_t *Display_CreateIcon(lv_obj_t *parent, lv_color_t color,
+                             const char *symbol, const char *name) {
+  lv_obj_t *btn = lv_btn_create(parent);
+  lv_obj_set_size(btn, 70, 70);
+  lv_obj_set_style_radius(btn, LV_RADIUS_CIRCLE, 0);
+  lv_obj_set_style_bg_color(btn, color, 0);
+  lv_obj_add_event_cb(btn, icon_touch_event_cb, LV_EVENT_CLICKED, (void *)name);
+
+  lv_obj_t *label = lv_label_create(btn);
+  lv_label_set_text(label, symbol);
+  lv_obj_set_style_text_color(label, lv_color_white(), 0);
+  lv_obj_set_style_text_opa(label, LV_OPA_80, 0);
+  lv_obj_set_style_text_font(label, &lv_font_montserrat_28, 0);
+  // lv_label_set_text(label, name);
+  lv_obj_center(label);
+
+  return btn;
+}
+
+/* CALLBACKS */
+
+static void icon_touch_event_cb(lv_event_t *event) {
+  const char *name = (const char *)lv_event_get_user_data(event);
+  ESP_LOGI("BTN", "%s pressed", name);
+  // TODO: lv_scr_load_anim(target_screen, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300, 0,
+  // false);
+}
+
 static void lvgl_tick_cb(void *arg) { lv_tick_inc(2); }
 
 static bool flush_ready_cb(esp_lcd_panel_io_handle_t panel_io,
@@ -50,14 +116,7 @@ static void touchpad_read_cb(lv_indev_drv_t *drv, lv_indev_data_t *data) {
   }
 }
 
-void display_task(void *arg) {
-  while (1) {
-    vTaskDelay(pdMS_TO_TICKS(10));
-    lv_timer_handler();
-  }
-}
-
-/* */
+/* INIT SUB-FUNCTIONS */
 
 esp_err_t init_panel(void) {
   gpio_config_t bk_gpio_config = {
@@ -165,43 +224,11 @@ void init_lvgl(void) {
   lv_indev_drv_register(&indev_drv);
   ESP_LOGI("TOUCH", "indev registered, touch_handle=%p", touch_handle);
 
-  // 1. Define the timer configuration
   const esp_timer_create_args_t lvgl_tick_timer_args = {
       .callback = &lvgl_tick_cb, .name = "lvgl_tick"};
 
-  // 2. Create the timer handle
   esp_timer_handle_t lvgl_tick_timer = NULL;
   ESP_ERROR_CHECK(esp_timer_create(&lvgl_tick_timer_args, &lvgl_tick_timer));
 
-  // 3. Start the timer to run every 2ms (2000 microseconds)
   ESP_ERROR_CHECK(esp_timer_start_periodic(lvgl_tick_timer, 2000));
 }
-
-esp_err_t Display_Control_Init(Display_Control_t *ctrl) {
-  ctrl->current_screen = DISPLAY_SCREEN_HOME;
-
-  esp_err_t err = init_panel();
-  if (err != ESP_OK) {
-    return err;
-  }
-
-  err = init_touch();
-  if (err != ESP_OK) {
-    return err;
-  }
-
-  init_lvgl();
-
-  lv_obj_t *screen = lv_obj_create(NULL);
-  lv_obj_set_style_bg_color(screen, lv_color_hex(0x1a1a1a), 0);
-
-  xTaskCreatePinnedToCore(display_task, "display task", 4096, NULL, 5, NULL, 1);
-
-  Home_Screen_Create();
-
-  return ESP_OK;
-}
-
-esp_lcd_touch_handle_t Display_GetTouchHandle(void) { return touch_handle; }
-
-esp_err_t Display_SetScreen(Display_Screens screen);

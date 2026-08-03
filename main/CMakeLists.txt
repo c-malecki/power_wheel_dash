@@ -1,7 +1,4 @@
-idf_component_register(SRCS "main.c"
-                    "../lib/display/display.c" "../lib/display/home_screen.c" "../lib/display/ui.c"
-                    "../lib/light/light.c"
-                    "../lib/sound/sound.c"
-                    "../lib/storage/storage.c"
-                    INCLUDE_DIRS "." "../lib/display" "../lib/light" "../lib/sound" "../lib/storage"
+idf_component_register(SRCS "main.c" "../core/os.c" "../core/home_screen.c"
+                    "../controllers/display.c" "../controllers/light.c" "../controllers/sound.c" "../controllers/storage.c"
+                    INCLUDE_DIRS "." "../core" "../controllers"
                     REQUIRES esp_lcd)
