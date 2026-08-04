@@ -1,7 +1,5 @@
 #include "light.h"
 
-/* */
-
 static led_strip_handle_t strip_hl_l;
 static led_strip_handle_t strip_hl_r;
 static led_strip_handle_t strip_body;
@@ -20,13 +18,6 @@ void strip_set_color(led_strip_handle_t strip, uint8_t len,
 /* */
 
 esp_err_t Light_Init(void) {
-  // ctrl->headlight_l.is_on = false;
-  // ctrl->headlight_r.is_on = false;
-  // ctrl->bodylight.is_on = false;
-  // ctrl->headlight_l.color = light_color_none;
-  // ctrl->headlight_r.color = light_color_none;
-  // ctrl->bodylight.color = light_color_none;
-
   led_strip_config_t hll_config = {
       .strip_gpio_num = LIGHT_HEADLIGHT_L_DC_PIN,
       .max_leds = LIGHT_HEADLIGHT_MAX_LEDS,

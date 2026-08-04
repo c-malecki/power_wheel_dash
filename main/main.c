@@ -1,13 +1,12 @@
 #include "esp_err.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "light.h"
 #include "os.h"
 
 void app_main(void) {
   ESP_ERROR_CHECK(OS_Init());
 
-  Light_SetColor(LIGHT_SECTION_HL_L, light_color_blue);
+  // Light_SetColor(LIGHT_SECTION_HL_L, light_color_blue);
 
   while (1) {
 

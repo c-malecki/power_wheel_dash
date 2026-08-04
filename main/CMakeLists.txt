@@ -1,13 +1,20 @@
 idf_component_register(
   SRCS "main.c"
-    "../core/os.c"
-    "../peripherals/display.c" "../peripherals/light.c" "../peripherals/sound.c" "../peripherals/storage.c"
-    "../screens/home.c" "../screens/light_control.c"
+    "../src/os.c"
+    "../src/display/display.c"
+    "../src/ui/home.c"
+    "../src/ui/light_control.c"
+    "../src/ui/ui.c"
+    "../src/light/light.c"
+    "../src/sound/sound.c"
+    "../src/storage/storage.c"
 
-  INCLUDE_DIRS "."
-    "../core"
-    "../peripherals"
-    "../screens"
+  INCLUDE_DIRS "../src"
+    "../src/display"
+    "../src/light"
+    "../src/sound"
+    "../src/storage"
+    "../src/ui"
 
   REQUIRES esp_lcd
 )

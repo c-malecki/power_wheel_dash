@@ -32,20 +32,6 @@ typedef struct
     uint8_t b;
 } Light_Color_t;
 
-typedef struct
-{
-    bool is_on;
-    Light_Color_t color;
-    // animation?
-} Light_Section_t;
-
-typedef struct
-{
-    Light_Section_t headlight_l;
-    Light_Section_t headlight_r;
-    Light_Section_t bodylight;
-} Light_Control_t;
-
 extern const Light_Color_t light_color_none;
 extern const Light_Color_t light_color_red;
 extern const Light_Color_t light_color_green;
