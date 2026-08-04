@@ -5,7 +5,6 @@ idf_component_register(
     "../src/drivers/sound.c"
     "../src/drivers/storage.c"
     "../src/os/os.c"
-    "../src/os/ui/style.c"
     "../src/os/ui/ui_manager.c"
     "../src/os/ui/view.c"
 

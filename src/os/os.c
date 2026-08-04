@@ -18,12 +18,8 @@ void OS_Navigate(UI_View_IDs new_view_id) {
     UI_Manager_RenderView(&views_home);
     break;
 
-  case UI_VIEW_LIGHT_CONTROL:
-    UI_Manager_RenderView(&views_light_control);
-    break;
-
-  case UI_VIEW_LIGHT_COLORPICKER:
-    // create_color_picker();
+  case UI_VIEW_LIGHT:
+    UI_Manager_RenderView(&views_light);
     break;
 
   default:

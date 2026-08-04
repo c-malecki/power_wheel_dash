@@ -3,11 +3,6 @@
 
 #include "view.h"
 
-typedef struct
-{
-
-} UI_Manager_t;
-
 void UI_Manager_Init(void);
 void UI_Manager_RenderView(const UI_View_t *new_view);
 
