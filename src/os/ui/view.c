@@ -1,14 +1,14 @@
 #include "view.h"
+#include "lvgl.h"
 
 UI_View_t const views_home = {
     .view_id = UI_VIEW_HOME,
-    .layout = UI_LAYOUT_GRID,
-    .dimensions = UI_LAYOUT_DIMENSION_3x2,
+    .layout = UI_VIEW_LAYOUT_GRID,
     .buttons_total = 3,
     .buttons =
         {
             {
-                .action_type = UI_INPUT_ACTION_NAVIGATE,
+                .action_type = UI_VIEW_ACTION_NAVIGATE,
                 .action_data = UI_VIEW_LIGHT_CONTROL,
                 .color = (0xFFC107),
                 .symbol = LV_SYMBOL_POWER,
@@ -17,7 +17,7 @@ UI_View_t const views_home = {
                 .row_pos = 0,
             },
             {
-                .action_type = UI_INPUT_ACTION_NAVIGATE,
+                .action_type = UI_VIEW_ACTION_NAVIGATE,
                 .action_data = UI_VIEW_SOUND_CONTROL,
                 .color = (0x2196F3),
                 .symbol = LV_SYMBOL_AUDIO,
@@ -26,7 +26,7 @@ UI_View_t const views_home = {
                 .row_pos = 0,
             },
             {
-                .action_type = UI_INPUT_ACTION_NAVIGATE,
+                .action_type = UI_VIEW_ACTION_NAVIGATE,
                 .action_data = UI_VIEW_SETTINGS,
                 .color = (0x607D8B),
                 .symbol = LV_SYMBOL_SETTINGS,
@@ -39,13 +39,12 @@ UI_View_t const views_home = {
 
 UI_View_t const views_light_control = {
     .view_id = UI_VIEW_LIGHT_CONTROL,
-    .layout = UI_LAYOUT_FLEX,
-    .dimensions = UI_LAYOUT_DIMENSION_3x2,
-    .buttons_total = 3,
+    .layout = UI_VIEW_LAYOUT_FLEX,
+    .buttons_total = 2,
     .buttons =
         {
             {
-                .action_type = UI_INPUT_ACTION_NAVIGATE,
+                .action_type = UI_VIEW_ACTION_NAVIGATE,
                 .action_data = UI_VIEW_LIGHT_COLORPICKER,
                 .color = (0xFFC107),
                 .symbol = LV_SYMBOL_LEFT,
@@ -54,16 +53,7 @@ UI_View_t const views_light_control = {
                 .row_pos = 0,
             },
             {
-                .action_type = UI_INPUT_ACTION_NAVIGATE,
-                .action_data = UI_VIEW_LIGHT_COLORPICKER,
-                .color = (0xFFC107),
-                .symbol = LV_SYMBOL_RIGHT,
-                .name = "Headlight Right",
-                .col_pos = 1,
-                .row_pos = 0,
-            },
-            {
-                .action_type = UI_INPUT_ACTION_NAVIGATE,
+                .action_type = UI_VIEW_ACTION_NAVIGATE,
                 .action_data = UI_VIEW_LIGHT_COLORPICKER,
                 .color = (0xFFC107),
                 .symbol = LV_SYMBOL_DRIVE,

@@ -25,6 +25,14 @@ typedef enum {
     LIGHT_SECTION_BODY
 } Light_Sections;
 
+typedef enum {
+    LIGHT_COLOR_NONE = 0,
+    LIGHT_COLOR_RED,
+    LIGHT_COLOR_GREEN,
+    LIGHT_COLOR_BLUE,
+    LIGHT_COLOR_PURPLE,
+} Light_Colors;
+
 typedef struct
 {
     uint8_t r;

@@ -5,10 +5,8 @@
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
 #include "light.h"
-#include "portmacro.h"
 #include "ui_manager.h"
 
-static OS_State_t OS_state;
 static QueueHandle_t OS_event_queue = NULL;
 SemaphoreHandle_t OS_state_mutex = NULL;
 
@@ -17,11 +15,11 @@ SemaphoreHandle_t OS_state_mutex = NULL;
 void OS_Navigate(UI_View_IDs new_view_id) {
   switch (new_view_id) {
   case UI_VIEW_HOME:
-    UI_RenderView(&views_home);
+    UI_Manager_RenderView(&views_home);
     break;
 
   case UI_VIEW_LIGHT_CONTROL:
-    UI_RenderView(&views_light_control);
+    UI_Manager_RenderView(&views_light_control);
     break;
 
   case UI_VIEW_LIGHT_COLORPICKER:
@@ -45,8 +43,7 @@ static void os_task(void *arg) {
 
       switch (event.type) {
       case OS_EVENT_NAVIGATE:
-        OS_state.current_screen = event.data.screen_id;
-        OS_Navigate(OS_state.current_screen);
+        OS_Navigate(event.data.view_id);
         break;
       case OS_EVENT_LIGHT_CHANGE:
         // OS_state.headlight_color = event.data.color;
@@ -77,7 +74,7 @@ esp_err_t OS_Init(void) {
     return err;
   }
 
-  // peripheral systems/drivers
+  // drivers
   err = Display_Init();
   if (err != ESP_OK) {
     return err;
@@ -89,7 +86,7 @@ esp_err_t OS_Init(void) {
   }
 
   // higher level systems
-  UI_Init();
+  UI_Manager_Init();
   OS_Navigate(UI_VIEW_HOME);
 
   xTaskCreatePinnedToCore(os_task, "os_task", 4096, NULL, 10, NULL, 0);

@@ -1,20 +1,18 @@
 idf_component_register(
   SRCS "main.c"
-    "../src/os.c"
-    "../src/display/display.c"
-    "../src/ui/style.c"
-    "../src/ui/ui_manager.c"
-    "../src/ui/view.c"
-    "../src/light/light.c"
-    "../src/sound/sound.c"
-    "../src/storage/storage.c"
+    "../src/drivers/display.c"
+    "../src/drivers/light.c"
+    "../src/drivers/sound.c"
+    "../src/drivers/storage.c"
+    "../src/os/os.c"
+    "../src/os/ui/style.c"
+    "../src/os/ui/ui_manager.c"
+    "../src/os/ui/view.c"
 
   INCLUDE_DIRS "../src"
-    "../src/display"
-    "../src/light"
-    "../src/sound"
-    "../src/storage"
-    "../src/ui"
+    "../src/drivers"
+    "../src/os"
+    "../src/os/ui"
 
   REQUIRES esp_lcd esp_timer
 )
