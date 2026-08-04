@@ -6,8 +6,8 @@
 
 typedef void (*color_picker_confirmed_cb_t)(lv_color_t color);
 
-extern const int16_t col_dsc_3x2[];
-extern const int16_t row_dsc_3x2[];
+extern const int32_t col_dsc_3x2[];
+extern const int32_t row_dsc_3x2[];
 
 typedef enum {
     UI_SCREEN_ID_HOME = 0,

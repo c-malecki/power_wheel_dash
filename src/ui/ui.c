@@ -3,9 +3,9 @@
 
 lv_obj_t *create_button(lv_obj_t *parent, const UI_Button_t *button);
 
-const int16_t col_dsc_3x2[] = {LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1),
+const int32_t col_dsc_3x2[] = {LV_GRID_FR(1), LV_GRID_FR(1), LV_GRID_FR(1),
                                LV_GRID_TEMPLATE_LAST};
-const int16_t row_dsc_3x2[] = {LV_GRID_FR(1), LV_GRID_FR(1),
+const int32_t row_dsc_3x2[] = {LV_GRID_FR(1), LV_GRID_FR(1),
                                LV_GRID_TEMPLATE_LAST};
 
 void UI_Create_Screen(const UI_Screen_t *target_screen) {
@@ -98,79 +98,80 @@ lv_obj_t *create_button(lv_obj_t *parent, const UI_Button_t *button) {
 
 /* COLORPICKER */
 
-static lv_obj_t *colors_wheel;
-static color_picker_confirmed_cb_t app_confirm_callback = NULL;
+// static lv_obj_t *colors_wheel;
+// static color_picker_confirmed_cb_t app_confirm_callback = NULL;
 
-static void green_btn_cb(lv_event_t *e) {
-  lv_event_code_t code = lv_event_get_code(e);
-  if (code == LV_EVENT_CLICKED) {
-    // 1. Get the color from the internal wheel object
-    lv_color_t final_color = lv_colorwheel_get_rgb(colors_wheel);
+// static void green_btn_cb(lv_event_t *e) {
+//   lv_event_code_t code = lv_event_get_code(e);
+//   if (code == LV_EVENT_CLICKED) {
+//     // 1. Get the color from the internal wheel object
+//     lv_color_t final_color = lv_colorwheel_get_rgb(colors_wheel);
 
-    // 2. Safely push the data out to the application layer if registered
-    if (app_confirm_callback != NULL) {
-      app_confirm_callback(final_color);
-    }
-  }
-}
+//     // 2. Safely push the data out to the application layer if registered
+//     if (app_confirm_callback != NULL) {
+//       app_confirm_callback(final_color);
+//     }
+//   }
+// }
 
-static void red_btn_cb(lv_event_t *e) {
-  if (lv_event_get_code(e) == LV_EVENT_CLICKED) {
-    // Optional: Call a cancel callback if you add one to your header
-  }
-}
+// static void red_btn_cb(lv_event_t *e) {
+//   if (lv_event_get_code(e) == LV_EVENT_CLICKED) {
+//     // Optional: Call a cancel callback if you add one to your header
+//   }
+// }
 
-void create_color_picker(color_picker_confirmed_cb_t on_confirm_cb) {
-  // Save the application callback for later execution
-  app_confirm_callback = on_confirm_cb;
+// void create_color_picker(color_picker_confirmed_cb_t on_confirm_cb) {
+//   // Save the application callback for later execution
+//   app_confirm_callback = on_confirm_cb;
 
-  lv_obj_t *cur_screen = lv_scr_act();
-  lv_obj_clean(cur_screen);
+//   lv_obj_t *cur_screen = lv_scr_act();
+//   lv_obj_clean(cur_screen);
 
-  // Main layout container (Horizontal Row)
-  lv_obj_t *main_container = lv_obj_create(cur_screen);
-  lv_obj_set_size(main_container, 320, 240);
-  lv_obj_center(main_container);
-  lv_obj_set_layout(main_container, LV_LAYOUT_FLEX);
-  lv_obj_set_flex_flow(main_container, LV_FLEX_FLOW_ROW);
-  lv_obj_set_flex_align(main_container, LV_FLEX_ALIGN_CENTER,
-                        LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-  lv_obj_clear_flag(main_container, LV_OBJ_FLAG_SCROLLABLE);
+//   // Main layout container (Horizontal Row)
+//   lv_obj_t *main_container = lv_obj_create(cur_screen);
+//   lv_obj_set_size(main_container, 320, 240);
+//   lv_obj_center(main_container);
+//   lv_obj_set_layout(main_container, LV_LAYOUT_FLEX);
+//   lv_obj_set_flex_flow(main_container, LV_FLEX_FLOW_ROW);
+//   lv_obj_set_flex_align(main_container, LV_FLEX_ALIGN_CENTER,
+//                         LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+//   lv_obj_clear_flag(main_container, LV_OBJ_FLAG_SCROLLABLE);
 
-  // Color Wheel
-  colors_wheel = lv_colorwheel_create(main_container, true);
-  lv_obj_set_size(colors_wheel, 180, 180);
+//   // Color Wheel
+//   colors_wheel = lv_colorwheel_create(main_container, true);
+//   lv_obj_set_size(colors_wheel, 180, 180);
 
-  // Buttons Container (Vertical Column)
-  lv_obj_t *btn_container = lv_obj_create(main_container);
-  lv_obj_set_size(btn_container, 80, 180);
-  lv_obj_set_layout(btn_container, LV_LAYOUT_FLEX);
-  lv_obj_set_flex_flow(btn_container, LV_FLEX_FLOW_COLUMN);
-  lv_obj_set_flex_align(btn_container, LV_FLEX_ALIGN_SPACE_EVENLY,
-                        LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-  lv_obj_set_style_pad_all(btn_container, 0, LV_PART_MAIN);
-  lv_obj_set_style_border_width(btn_container, 0, LV_PART_MAIN);
-  lv_obj_set_style_bg_opa(btn_container, LV_OPA_TRANSP, LV_PART_MAIN);
+//   // Buttons Container (Vertical Column)
+//   lv_obj_t *btn_container = lv_obj_create(main_container);
+//   lv_obj_set_size(btn_container, 80, 180);
+//   lv_obj_set_layout(btn_container, LV_LAYOUT_FLEX);
+//   lv_obj_set_flex_flow(btn_container, LV_FLEX_FLOW_COLUMN);
+//   lv_obj_set_flex_align(btn_container, LV_FLEX_ALIGN_SPACE_EVENLY,
+//                         LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+//   lv_obj_set_style_pad_all(btn_container, 0, LV_PART_MAIN);
+//   lv_obj_set_style_border_width(btn_container, 0, LV_PART_MAIN);
+//   lv_obj_set_style_bg_opa(btn_container, LV_OPA_TRANSP, LV_PART_MAIN);
 
-  // Confirm Button
-  lv_obj_t *green_btn = lv_btn_create(btn_container);
-  lv_obj_set_size(green_btn, 50, 50);
-  lv_obj_set_style_bg_color(green_btn, lv_color_make(0, 180, 0), LV_PART_MAIN);
-  lv_obj_add_event_cb(green_btn, green_btn_cb, LV_EVENT_CLICKED, NULL);
+//   // Confirm Button
+//   lv_obj_t *green_btn = lv_btn_create(btn_container);
+//   lv_obj_set_size(green_btn, 50, 50);
+//   lv_obj_set_style_bg_color(green_btn, lv_color_make(0, 180, 0),
+//   LV_PART_MAIN); lv_obj_add_event_cb(green_btn, green_btn_cb,
+//   LV_EVENT_CLICKED, NULL);
 
-  lv_obj_t *green_label = lv_label_create(green_btn);
-  lv_label_set_text(green_label, LV_SYMBOL_OK);
-  lv_obj_center(green_label);
+//   lv_obj_t *green_label = lv_label_create(green_btn);
+//   lv_label_set_text(green_label, LV_SYMBOL_OK);
+//   lv_obj_center(green_label);
 
-  // Cancel Button
-  lv_obj_t *red_btn = lv_btn_create(btn_container);
-  lv_obj_set_size(red_btn, 50, 50);
-  lv_obj_set_style_bg_color(red_btn, lv_color_make(220, 0, 0), LV_PART_MAIN);
-  lv_obj_add_event_cb(red_btn, red_btn_cb, LV_EVENT_CLICKED, NULL);
+//   // Cancel Button
+//   lv_obj_t *red_btn = lv_btn_create(btn_container);
+//   lv_obj_set_size(red_btn, 50, 50);
+//   lv_obj_set_style_bg_color(red_btn, lv_color_make(220, 0, 0), LV_PART_MAIN);
+//   lv_obj_add_event_cb(red_btn, red_btn_cb, LV_EVENT_CLICKED, NULL);
 
-  lv_obj_t *red_label = lv_label_create(red_btn);
-  lv_label_set_text(red_label, LV_SYMBOL_CLOSE);
-  lv_obj_center(red_label);
+//   lv_obj_t *red_label = lv_label_create(red_btn);
+//   lv_label_set_text(red_label, LV_SYMBOL_CLOSE);
+//   lv_obj_center(red_label);
 
-  lv_scr_load(cur_screen);
-}
+//   lv_scr_load(cur_screen);
+// }

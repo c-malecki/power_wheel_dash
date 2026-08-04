@@ -9,7 +9,7 @@
 
 static OS_State_t OS_state;
 static QueueHandle_t OS_event_queue = NULL;
-static SemaphoreHandle_t OS_state_mutex = NULL;
+SemaphoreHandle_t OS_state_mutex = NULL;
 
 static void os_task(void *arg) {
   OS_Event_t event;

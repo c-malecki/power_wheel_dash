@@ -16,5 +16,5 @@ idf_component_register(
     "../src/storage"
     "../src/ui"
 
-  REQUIRES esp_lcd
+  REQUIRES esp_lcd esp_timer
 )

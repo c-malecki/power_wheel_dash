@@ -3,6 +3,10 @@
 
 #include "esp_err.h"
 #include "lvgl.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
+
+extern SemaphoreHandle_t OS_state_mutex;
 
 typedef enum {
     OS_SCREEN_HOME = 0,
