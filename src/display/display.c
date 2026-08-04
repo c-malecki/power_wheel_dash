@@ -4,11 +4,8 @@
 #include "esp_lcd_panel_io.h"
 #include "esp_lcd_panel_ops.h"
 #include "esp_lcd_touch_xpt2046.h"
-#include "esp_log.h"
 #include "esp_timer.h"
-#include "misc/lv_color.h"
 #include "os.h"
-#include "ui.h"
 #include <stdint.h>
 
 static esp_lcd_panel_io_handle_t io_handle = NULL;
@@ -18,25 +15,13 @@ static esp_lcd_touch_handle_t touch_handle = NULL;
 static lv_display_t *disp = NULL;
 static lv_indev_t *indev = NULL;
 
-/* PRIMARY FUNCTIONS */
+static void display_task(void *arg);
 
-void Display_Navigate(UI_Screen_IDs ui_screen_id) {
-  switch (ui_screen_id) {
-  case UI_SCREEN_ID_HOME:
-    UI_Create_Screen(&screens_home);
-    break;
+/* INTERFACE */
 
-  case UI_SCREEN_ID_LIGHT_CONTROL:
-    UI_Create_Screen(&screens_light_control);
-    break;
-
-  case UI_SCREEN_ID_LIGHT_COLORPICKER:
-    // create_color_picker();
-    break;
-
-  default:
-    break;
-  }
+void Display_TaskRun(void) {
+  xTaskCreatePinnedToCore(display_task, "display task", 16384, NULL, 5, NULL,
+                          1);
 }
 
 /* SETUP STUFF */
@@ -223,9 +208,4 @@ static void display_task(void *arg) {
       xSemaphoreGive(OS_state_mutex);
     }
   }
-}
-
-void Display_TaskRun(void) {
-  xTaskCreatePinnedToCore(display_task, "display task", 16384, NULL, 5, NULL,
-                          1);
 }

@@ -4,7 +4,9 @@
   "clangd.arguments": [
     "--background-index",
     "--query-driver=**",
-    "--compile-commands-dir=${env:HOME}/Projects/power_wheel_dash/build"
+    "--compile-commands-dir=${env:HOME}/Projects/power_wheel_dash/build",
+    "--function-arg-placeholders=0"
   ],
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "editor.inlayHints.enabled": "off"
 }

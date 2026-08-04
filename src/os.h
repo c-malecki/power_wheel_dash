@@ -5,6 +5,7 @@
 #include "lvgl.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
+#include "view.h"
 
 extern SemaphoreHandle_t OS_state_mutex;
 
@@ -46,6 +47,7 @@ typedef struct
 } OS_State_t;
 
 esp_err_t OS_Init(void);
+void OS_Navigate(UI_View_IDs new_view_id);
 void OS_PostEvent(OS_Event_t event);
 OS_State_t OS_GetState(void);
 

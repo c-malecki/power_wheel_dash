@@ -6,10 +6,36 @@
 #include "freertos/semphr.h"
 #include "light.h"
 #include "portmacro.h"
+#include "ui_manager.h"
 
 static OS_State_t OS_state;
 static QueueHandle_t OS_event_queue = NULL;
 SemaphoreHandle_t OS_state_mutex = NULL;
+
+/* INTERFACE */
+
+void OS_Navigate(UI_View_IDs new_view_id) {
+  switch (new_view_id) {
+  case UI_VIEW_HOME:
+    UI_RenderView(&views_home);
+    break;
+
+  case UI_VIEW_LIGHT_CONTROL:
+    UI_RenderView(&views_light_control);
+    break;
+
+  case UI_VIEW_LIGHT_COLORPICKER:
+    // create_color_picker();
+    break;
+
+  default:
+    break;
+  }
+}
+
+void OS_PostEvent(OS_Event_t event) { xQueueSend(OS_event_queue, &event, 0); }
+
+/* SETUP STUFF */
 
 static void os_task(void *arg) {
   OS_Event_t event;
@@ -20,7 +46,7 @@ static void os_task(void *arg) {
       switch (event.type) {
       case OS_EVENT_NAVIGATE:
         OS_state.current_screen = event.data.screen_id;
-        Display_Navigate(OS_state.current_screen);
+        OS_Navigate(OS_state.current_screen);
         break;
       case OS_EVENT_LIGHT_CHANGE:
         // OS_state.headlight_color = event.data.color;
@@ -51,6 +77,7 @@ esp_err_t OS_Init(void) {
     return err;
   }
 
+  // peripheral systems/drivers
   err = Display_Init();
   if (err != ESP_OK) {
     return err;
@@ -61,8 +88,9 @@ esp_err_t OS_Init(void) {
     return err;
   }
 
-  lv_obj_clean(lv_scr_act());
-  Display_Navigate(UI_SCREEN_ID_HOME);
+  // higher level systems
+  UI_Init();
+  OS_Navigate(UI_VIEW_HOME);
 
   xTaskCreatePinnedToCore(os_task, "os_task", 4096, NULL, 10, NULL, 0);
 
@@ -70,5 +98,3 @@ esp_err_t OS_Init(void) {
 
   return ESP_OK;
 }
-
-void OS_PostEvent(OS_Event_t event) { xQueueSend(OS_event_queue, &event, 0); }
