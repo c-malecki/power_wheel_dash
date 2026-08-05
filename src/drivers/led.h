@@ -2,8 +2,6 @@
 #define __LED_H_
 
 #include "esp_err.h"
-#include "led_strip.h"
-#include <stdint.h>
 #include <stdbool.h>
 #include "data_types.h"
 
@@ -22,6 +20,6 @@
 
 esp_err_t LED_Init(void);
 
-void LED_SetColor(DATA_TYPE_ID_LEDStrips led_strip_id, DATA_TYPE_ID_LEDColors led_color_id);
+void LED_SetColor(DT_LED_Strip_ID led_strip_id, DT_LED_Color_ID led_color_id);
 
 #endif // __LED_H_

@@ -10,6 +10,6 @@
 extern SemaphoreHandle_t OS_STATE_MUTEX;
 
 esp_err_t OS_Init(void);
-void OS_PostEvent(DATA_TYPE_OSEvent_t os_event);
+void OS_PostEvent(DT_OS_Event_t os_event);
 
 #endif // __OS_H_

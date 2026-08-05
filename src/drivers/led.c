@@ -1,12 +1,12 @@
 #include "led.h"
 #include "data_types.h"
+#include "led_strip.h"
 
 static led_strip_handle_t strip_hll_handle;
 static led_strip_handle_t strip_hlr_handle;
 static led_strip_handle_t strip_body_handle;
 
-void strip_set_color(DATA_TYPE_ID_LEDStrips led_strip_id,
-                     const DATA_TYPE_LED_Color_t *color);
+void strip_set_color(DT_LED_Strip_ID led_strip_id, const DT_LED_Color_t *color);
 
 /* */
 
@@ -56,8 +56,7 @@ esp_err_t LED_Init(void) {
                                   &strip_body_handle);
 }
 
-const DATA_TYPE_LED_Color_t *
-color_from_id(DATA_TYPE_ID_LEDColors led_color_id) {
+const DT_LED_Color_t *color_from_id(DT_LED_Color_ID led_color_id) {
   switch (led_color_id) {
   case LED_COLOR_NONE_ID:
     return &LED_COLOR_NONE;
@@ -78,15 +77,14 @@ color_from_id(DATA_TYPE_ID_LEDColors led_color_id) {
   return &LED_COLOR_NONE;
 }
 
-void LED_SetColor(DATA_TYPE_ID_LEDStrips led_strip_id,
-                  DATA_TYPE_ID_LEDColors color_id) {
+void LED_SetColor(DT_LED_Strip_ID led_strip_id, DT_LED_Color_ID color_id) {
   strip_set_color(led_strip_id, color_from_id(color_id));
 }
 
 /* */
 
-void strip_set_color(DATA_TYPE_ID_LEDStrips led_strip_id,
-                     const DATA_TYPE_LED_Color_t *color) {
+void strip_set_color(DT_LED_Strip_ID led_strip_id,
+                     const DT_LED_Color_t *color) {
   switch (led_strip_id) {
   case LED_STRIP_HL_L_ID:
     led_strip_clear(strip_hll_handle);
@@ -110,6 +108,9 @@ void strip_set_color(DATA_TYPE_ID_LEDStrips led_strip_id,
       led_strip_set_pixel(strip_body_handle, i, color->r, color->g, color->b);
     }
     led_strip_refresh(strip_body_handle);
+    break;
+
+  default:
     break;
   }
 }

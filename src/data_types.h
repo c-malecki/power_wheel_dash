@@ -5,15 +5,18 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define UI_INPUT_HOME_BUTTON_NAME "home"
+
 /*
     Hardware
 */
 
 typedef enum {
-    LED_STRIP_HL_L_ID = 0,
+    LED_STRIP_NONE_ID = 0,
+    LED_STRIP_HL_L_ID,
     LED_STRIP_HL_R_ID,
     LED_STRIP_BODY_ID,
-} DATA_TYPE_ID_LEDStrips;
+} DT_LED_Strip_ID;
 
 typedef enum {
     LED_COLOR_NONE_ID = 0,
@@ -21,51 +24,57 @@ typedef enum {
     LED_COLOR_GREEN_ID,
     LED_COLOR_BLUE_ID,
     LED_COLOR_PURPLE_ID,
-} DATA_TYPE_ID_LEDColors;
+} DT_LED_Color_ID;
 
 typedef struct
 {
     uint8_t r;
     uint8_t g;
     uint8_t b;
-} DATA_TYPE_LED_Color_t;
+} DT_LED_Color_t;
 
 // split headlights into 8, top 3 are turn signal and all are lights
 
-extern const DATA_TYPE_LED_Color_t LED_COLOR_NONE;
-extern const DATA_TYPE_LED_Color_t LED_COLOR_RED;
-extern const DATA_TYPE_LED_Color_t LED_COLOR_GREEN;
-extern const DATA_TYPE_LED_Color_t LED_COLOR_BLUE;
-extern const DATA_TYPE_LED_Color_t LED_COLOR_PURPLE;
+extern const DT_LED_Color_t LED_COLOR_NONE;
+extern const DT_LED_Color_t LED_COLOR_RED;
+extern const DT_LED_Color_t LED_COLOR_GREEN;
+extern const DT_LED_Color_t LED_COLOR_BLUE;
+extern const DT_LED_Color_t LED_COLOR_PURPLE;
 
 /*
     UI
 */
 
-typedef enum {
-    UI_INPUT_TYPE_BUTTON = 0,
-    UI_INPUT_TYPE_COLOR,
-} DATA_TYPE_ID_UIInputs;
+extern const lv_style_t STYLE_LAYOUT;
+
+extern const int32_t STYLE_LAYOUT_COLS_2[];
+extern const int32_t STYLE_LAYOUT_ROWS_1[];
+
+extern const int32_t STYLE_LAYOUT_COLS_3[];
+extern const int32_t STYLE_LAYOUT_ROWS_2[];
 
 typedef enum {
-    UI_INPUT_ACTION_NAVIGATE = 0,
-    UI_INPUT_ACTION_TRIGGER,
-    UI_INPUT_ACTION_SET_VALUE,
-} DATA_TYPE_ID_UI_InputActions;
+    UI_INPUT_TYPE_NAV_BUTTON = 0,
+    UI_INPUT_TYPE_BUTTON_MATRIX,
+} DT_UI_Input_TypeID;
+
+// typedef enum {
+//     UI_INPUT_ACTION_NONE = 0,
+//     UI_INPUT_ACTION_NAVIGATE,
+//     UI_INPUT_ACTION_SET_VALUE,
+// } DT_UI_Input_Action_TypeID;
 
 typedef enum {
-    UI_INPUT_ACTION_TRIGGER_COLORPICKER = 0,
-} DATA_TYPE_ID_UI_InputActionTriggers;
-
-typedef enum {
-    UI_LAYOUT_FLEX = 0,
-    UI_LAYOUT_GRID
-} DATA_TYPE_ID_UILayouts;
+    OSMANAGER_CAR_ID = 0,
+    OSMANAGER_MEDIA_ID,
+    OSMANAGER_VIEW_ID,
+} DT_OS_Manager_ID;
 
 typedef struct
 {
-    DATA_TYPE_ID_UIInputs type_id;
-    DATA_TYPE_ID_UI_InputActions action_type_id;
+    DT_UI_Input_TypeID type_id;
+    DT_OS_Manager_ID to_manager_id;
+    // DT_UI_Input_Action_TypeID action_type_id;
     uint32_t action_data;
     const char *name;
     int col_pos;
@@ -73,48 +82,44 @@ typedef struct
     uint32_t color;
     char *symbol;
     const lv_style_t *style;
-} UI_Input_t;
+    const char **button_matrix_map;
+} DT_UI_Input_t;
 
 typedef enum {
     VIEW_HOME_ID = 0,
-    VIEW_LIGHTS_ID,
+    VIEW_LIGHT_MENU_ID,
+    VIEW_LIGHT_CONTROL_ID,
     VIEW_MEDIA_ID,
     VIEW_SETTINGS_ID,
-} DATA_TYPE_ID_UIViews;
+} DT_UI_ViewDesc_ID;
 
 typedef struct
 {
-    DATA_TYPE_ID_UIViews view_id;
-    DATA_TYPE_ID_UILayouts layout_id;
+    DT_UI_ViewDesc_ID view_desc_id;
+    lv_layout_t layout_id;
     const int32_t *layout_cols;
     const int32_t *layout_rows;
     int inputs_total;
-    const UI_Input_t *inputs;
-} DATA_TYPE_UI_ViewDesc_t;
+    const DT_UI_Input_t *inputs;
+} DT_UI_ViewDesc_t;
 
 /* OS */
 
 typedef enum {
-    OSEVENT_VIEW_UPDATE_ID,
+    OSEVENT_NONE_ID = 0,
     OSEVENT_LED_UPDATE_ID,
-} DATA_TYPE_ID_OSEvents;
-
-typedef enum {
-    OSMANAGER_CAR_ID = 0,
-    OSMANAGER_MEDIA_ID,
-    OSMANAGER_VIEW_ID,
-} DATA_TYPE_ID_OSManagers;
+} DT_OS_Event_ID;
 
 typedef struct
 {
-    DATA_TYPE_ID_OSManagers manager_id;
-    DATA_TYPE_ID_OSEvents event_id;
+    DT_UI_Input_t *from_input;
+    DT_OS_Event_ID event_id;
     union {
-        DATA_TYPE_ID_UIViews view_id;
-        DATA_TYPE_ID_LEDStrips led_strip_id;
-        DATA_TYPE_ID_LEDColors led_color_id;
+        DT_UI_ViewDesc_ID view_id;
+        DT_LED_Strip_ID led_strip_id;
+        DT_LED_Color_ID led_color_id;
         bool led_strip_on;
     } data;
-} DATA_TYPE_OSEvent_t;
+} DT_OS_Event_t;
 
 #endif // __DATA_TYPES_H_
