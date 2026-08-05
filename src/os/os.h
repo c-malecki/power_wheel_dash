@@ -5,10 +5,10 @@
 #include "lvgl.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
-#include "view.h"
+#include "ui.h"
 #include "light.h"
 
-extern SemaphoreHandle_t OS_state_mutex;
+extern SemaphoreHandle_t OS_STATE_MUTEX;
 
 typedef enum {
     OS_EVENT_NAVIGATE,
@@ -21,13 +21,13 @@ typedef struct
     OS_Event_Type_t type;
     union {
         UI_View_IDs view_id;
-        // todo: move light into some sort of OS module
+        // todo: check for lvgl deduplication of my
+        // const declarations for colors
         Light_Colors color;
     } data;
 } OS_Event_t;
 
 esp_err_t OS_Init(void);
-void OS_Navigate(UI_View_IDs new_view_id);
 void OS_PostEvent(OS_Event_t event);
 
 #endif // __OS_H_

@@ -1,8 +1,18 @@
-#ifndef __VIEW_H_
-#define __VIEW_H_
+#ifndef __UI_H_
+#define __UI_H_
 
 #include "lvgl.h"
 #include <stdint.h>
+#include "nav_button.h"
+#include "home_button.h"
+
+extern const lv_style_t STYLE_LAYOUT;
+
+extern const int32_t STYLE_LAYOUT_COLS_2[];
+extern const int32_t STYLE_LAYOUT_ROWS_1[];
+
+extern const int32_t STYLE_LAYOUT_COLS_3[];
+extern const int32_t STYLE_LAYOUT_ROWS_2[];
 
 typedef enum {
     UI_VIEW_LAYOUT_FLEX = 0,
@@ -34,12 +44,12 @@ typedef struct
     int row_pos;
     uint32_t color;
     char *symbol;
-    lv_style_t style;
+    const lv_style_t *style;
 } UI_Input_t;
 
 typedef enum {
-    UI_VIEW_HOME = 0,
-    UI_VIEW_LIGHT,
+    UI_VIEW_ID_HOME = 0,
+    UI_VIEW_ID_LIGHTS,
     UI_VIEW_SOUND,
     UI_VIEW_SETTINGS,
 } UI_View_IDs;
@@ -54,16 +64,4 @@ typedef struct
     const UI_Input_t *inputs;
 } UI_View_t;
 
-extern const lv_style_t style_layout;
-extern const lv_style_t style_button;
-extern const lv_style_t style_button_icon;
-
-extern const lv_style_t style_home_button;
-extern const lv_style_t style_home_button_icon;
-
-extern UI_Input_t const home_button;
-
-extern UI_View_t const views_home;
-extern UI_View_t const views_light;
-
-#endif // __View_H_
+#endif // __UI_H_

@@ -193,19 +193,15 @@ esp_err_t Display_Init() {
 
   init_lvgl();
 
-  lv_obj_t *screen = lv_obj_create(NULL);
-  lv_obj_set_style_bg_color(screen, lv_color_hex(0x1a1a1a), 0);
-  lv_screen_load(screen);
-
   return ESP_OK;
 }
 
 static void display_task(void *arg) {
   while (1) {
     vTaskDelay(pdMS_TO_TICKS(10));
-    if (xSemaphoreTake(OS_state_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
+    if (xSemaphoreTake(OS_STATE_MUTEX, pdMS_TO_TICKS(10)) == pdTRUE) {
       lv_timer_handler();
-      xSemaphoreGive(OS_state_mutex);
+      xSemaphoreGive(OS_STATE_MUTEX);
     }
   }
 }
