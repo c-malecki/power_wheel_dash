@@ -1,6 +1,8 @@
 #include "os.h"
+#include "car_manager.h"
 #include "config.h"
 #include "display.h"
+#include "driver/spi_master.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
@@ -20,12 +22,14 @@ static void os_task(void *arg) {
     if (xQueueReceive(OS_event_queue, &event, portMAX_DELAY)) {
       xSemaphoreTake(OS_STATE_MUTEX, portMAX_DELAY);
 
-      switch (event.type) {
-      case OS_EVENT_NAVIGATE:
+      switch (event.type_id) {
+      case OS_EVENT_UPDATE_VIEW:
         View_Manager_Navigate(event.data.view_id);
         break;
-      case OS_EVENT_LED_CHANGE:
-        // OS_state.headlight_color = event.data.color;
+      case OS_EVENT_UPDATE_LED:
+        Car_Manager_SetLight(event.data.car_light_id,
+                             event.data.car_light_color_id,
+                             event.data.car_light_on);
         break;
       default:
         break;
@@ -65,6 +69,7 @@ esp_err_t OS_Init(void) {
   }
 
   // higher level systems
+  Car_Manager_Init();
   View_Manager_Init();
 
   xTaskCreatePinnedToCore(os_task, "os_task", 4096, NULL, 10, NULL, 0);

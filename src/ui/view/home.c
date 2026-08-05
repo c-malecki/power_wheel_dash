@@ -4,8 +4,8 @@
 #include "ui.h"
 
 UI_Input_t const BUTTON_NAV_HOME = {
-    .input_type = UI_INPUT_TYPE_BUTTON,
-    .action_type = UI_VIEW_ACTION_NAVIGATE,
+    .type_id = UI_INPUT_TYPE_BUTTON,
+    .action_type_id = UI_INPUT_ACTION_NAVIGATE,
     .action_data = UI_VIEW_ID_HOME,
     .name = "home",
     .color = (0x607D8B),
@@ -15,8 +15,8 @@ UI_Input_t const BUTTON_NAV_HOME = {
 
 static const UI_Input_t home_inputs[] = {
     {
-        .input_type = UI_INPUT_TYPE_BUTTON,
-        .action_type = UI_VIEW_ACTION_NAVIGATE,
+        .type_id = UI_INPUT_TYPE_BUTTON,
+        .action_type_id = UI_INPUT_ACTION_NAVIGATE,
         .action_data = UI_VIEW_ID_LIGHTS,
         .col_pos = 0,
         .row_pos = 0,
@@ -26,8 +26,8 @@ static const UI_Input_t home_inputs[] = {
         .style = &STYLE_NAV_BUTTON,
     },
     {
-        .input_type = UI_INPUT_TYPE_BUTTON,
-        .action_type = UI_VIEW_ACTION_NAVIGATE,
+        .type_id = UI_INPUT_TYPE_BUTTON,
+        .action_type_id = UI_INPUT_ACTION_NAVIGATE,
         .action_data = UI_VIEW_ID_LIGHTS,
         .col_pos = 1,
         .row_pos = 0,
@@ -37,8 +37,8 @@ static const UI_Input_t home_inputs[] = {
         .style = &STYLE_NAV_BUTTON,
     },
     {
-        .input_type = UI_INPUT_TYPE_BUTTON,
-        .action_type = UI_VIEW_ACTION_NAVIGATE,
+        .type_id = UI_INPUT_TYPE_BUTTON,
+        .action_type_id = UI_INPUT_ACTION_NAVIGATE,
         .action_data = UI_VIEW_ID_LIGHTS,
         .col_pos = 2,
         .row_pos = 0,
@@ -50,7 +50,7 @@ static const UI_Input_t home_inputs[] = {
 
 UI_View_t const VIEW_HOME = {
     .view_id = UI_VIEW_ID_HOME,
-    .layout_style = UI_VIEW_LAYOUT_GRID,
+    .layout_style_id = UI_VIEW_LAYOUT_GRID,
     .layout_cols = STYLE_LAYOUT_COLS_3,
     .layout_rows = STYLE_LAYOUT_ROWS_2,
     .inputs_total = 3,

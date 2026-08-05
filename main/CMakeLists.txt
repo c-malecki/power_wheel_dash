@@ -5,6 +5,8 @@ idf_component_register(
     "../src/drivers/sound.c"
     "../src/drivers/storage.c"
     "../src/os/os.c"
+    "../src/os/car_manager.c"
+    "../src/os/media_manager.c"
     "../src/os/view_manager.c"
     "../src/ui/ui.c"
     "../src/ui/element/home_button.c"

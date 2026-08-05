@@ -1,5 +1,5 @@
 #include "view_manager.h"
-#include "core/lv_observer.h"
+#include "car_manager.h"
 #include "home.h"
 #include "light.h"
 #include "os.h"
@@ -9,20 +9,32 @@ static lv_subject_t subject_is_home;
 
 static void input_touch_event_cb(lv_event_t *event) {
   if (lv_event_get_code(event) == LV_EVENT_CLICKED) {
-    lv_obj_t *target = lv_event_get_target(event);
-    UI_Input_t *input = lv_obj_get_user_data(target);
+    lv_obj_t *event_target = lv_event_get_target(event);
+    UI_Input_t *ui_input = lv_obj_get_user_data(event_target);
 
     OS_Event_t os_event = {0};
     bool post_event = false;
 
-    if (input->action_type == UI_VIEW_ACTION_NAVIGATE) {
-      os_event.type = OS_EVENT_NAVIGATE;
-      os_event.data.view_id = (UI_View_IDs)input->action_data;
+    switch (ui_input->action_type_id) {
+    case UI_INPUT_ACTION_NAVIGATE:
+      os_event.type_id = OS_EVENT_UPDATE_VIEW;
+      os_event.data.view_id = (UI_View_IDs)ui_input->action_data;
       post_event = true;
-    } else if (input->action_type == UI_VIEW_ACTION_SET_VALUE) {
-      os_event.type = OS_EVENT_LED_CHANGE;
-      os_event.data.color = (LED_Colors)input->action_data;
+      break;
+
+    case UI_INPUT_ACTION_TRIGGER:
+
       post_event = true;
+      break;
+
+    case UI_INPUT_ACTION_SET_VALUE:
+      os_event.type_id = OS_EVENT_UPDATE_LED;
+      os_event.data.car_light_id = (Car_Light_IDs)ui_input->action_data;
+      os_event.data.car_light_color_id =
+          (Car_Light_Color_IDs)ui_input->action_data;
+      os_event.data.car_light_on = (bool)ui_input->action_data;
+      post_event = true;
+      break;
     }
 
     if (post_event) {
@@ -31,7 +43,7 @@ static void input_touch_event_cb(lv_event_t *event) {
   }
 }
 
-lv_obj_t *create_input(lv_obj_t *parent, const UI_Input_t *input);
+lv_obj_t *create_input(lv_obj_t *parent, const UI_Input_t *new_input);
 void populate_inputs(lv_obj_t *layout, const UI_View_t *new_view);
 lv_obj_t *create_layout(lv_obj_t *cur_screen, const UI_View_t *new_view);
 void render_view(const UI_View_t *new_view);
@@ -94,7 +106,7 @@ void View_Manager_Init(void) {
 lv_obj_t *create_input(lv_obj_t *parent, const UI_Input_t *new_input) {
   lv_obj_t *target = lv_btn_create(parent);
 
-  switch (new_input->input_type) {
+  switch (new_input->type_id) {
   case UI_INPUT_TYPE_BUTTON:
     lv_obj_add_style(target, new_input->style, 0);
     lv_obj_set_style_bg_color(target, lv_color_hex(new_input->color), 0);
@@ -132,7 +144,7 @@ lv_obj_t *create_layout(lv_obj_t *cur_screen, const UI_View_t *new_view) {
 
   lv_obj_add_style(layout, &STYLE_LAYOUT, 0);
 
-  if (new_view->layout_style == UI_VIEW_LAYOUT_GRID) {
+  if (new_view->layout_style_id == UI_VIEW_LAYOUT_GRID) {
     lv_obj_set_layout(layout, LV_LAYOUT_GRID);
     lv_obj_set_grid_dsc_array(layout, new_view->layout_cols,
                               new_view->layout_rows);

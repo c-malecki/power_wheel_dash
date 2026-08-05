@@ -6,24 +6,24 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "ui.h"
-#include "led.h"
+#include <stdbool.h>
+#include "car_manager.h"
 
 extern SemaphoreHandle_t OS_STATE_MUTEX;
 
 typedef enum {
-    OS_EVENT_NAVIGATE,
-    OS_EVENT_LED_CHANGE,
-    OS_EVENT_SPEED_UPDATE,
-} OS_Event_Type_t;
+    OS_EVENT_UPDATE_VIEW,
+    OS_EVENT_UPDATE_LED,
+} OS_Event_Type_IDs;
 
 typedef struct
 {
-    OS_Event_Type_t type;
+    OS_Event_Type_IDs type_id;
     union {
         UI_View_IDs view_id;
-        // todo: check for lvgl deduplication of my
-        // const declarations for colors
-        LED_Colors color;
+        Car_Light_IDs car_light_id;
+        Car_Light_Color_IDs car_light_color_id;
+        bool car_light_on;
     } data;
 } OS_Event_t;
 
