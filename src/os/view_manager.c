@@ -1,5 +1,6 @@
 #include "view_manager.h"
 #include "car_manager.h"
+#include "data_types.h"
 #include "home.h"
 #include "light.h"
 #include "os.h"
@@ -12,13 +13,13 @@ static void input_touch_event_cb(lv_event_t *event) {
     lv_obj_t *event_target = lv_event_get_target(event);
     UI_Input_t *ui_input = lv_obj_get_user_data(event_target);
 
-    OS_Event_t os_event = {0};
+    DATA_TYPE_OSEvent_t os_event = {0};
     bool post_event = false;
 
     switch (ui_input->action_type_id) {
     case UI_INPUT_ACTION_NAVIGATE:
-      os_event.type_id = OS_EVENT_UPDATE_VIEW;
-      os_event.data.view_id = (UI_View_IDs)ui_input->action_data;
+      os_event.event_id = OSEVENT_VIEW_UPDATE_ID;
+      os_event.data.view_id = (DATA_TYPE_ID_UIViews)ui_input->action_data;
       post_event = true;
       break;
 
@@ -28,11 +29,12 @@ static void input_touch_event_cb(lv_event_t *event) {
       break;
 
     case UI_INPUT_ACTION_SET_VALUE:
-      os_event.type_id = OS_EVENT_UPDATE_LED;
-      os_event.data.car_light_id = (Car_Light_IDs)ui_input->action_data;
-      os_event.data.car_light_color_id =
-          (Car_Light_Color_IDs)ui_input->action_data;
-      os_event.data.car_light_on = (bool)ui_input->action_data;
+      os_event.event_id = OSEVENT_LED_UPDATE_ID;
+      os_event.data.led_strip_id =
+          (DATA_TYPE_ID_LEDStrips)ui_input->action_data;
+      os_event.data.led_color_id =
+          (DATA_TYPE_ID_LEDColors)ui_input->action_data;
+      os_event.data.led_strip_on = (bool)ui_input->action_data;
       post_event = true;
       break;
     }
@@ -44,19 +46,20 @@ static void input_touch_event_cb(lv_event_t *event) {
 }
 
 lv_obj_t *create_input(lv_obj_t *parent, const UI_Input_t *new_input);
-void populate_inputs(lv_obj_t *layout, const UI_View_t *new_view);
-lv_obj_t *create_layout(lv_obj_t *cur_screen, const UI_View_t *new_view);
-void render_view(const UI_View_t *new_view);
+void populate_inputs(lv_obj_t *layout, const DATA_TYPE_UI_ViewDesc_t *new_view);
+lv_obj_t *create_layout(lv_obj_t *cur_screen,
+                        const DATA_TYPE_UI_ViewDesc_t *new_view);
+void render_view(const DATA_TYPE_UI_ViewDesc_t *new_view);
 
 /* */
 
-void View_Manager_Navigate(UI_View_IDs new_view_id) {
+void View_Manager_Navigate(DATA_TYPE_ID_UIViews new_view_id) {
   switch (new_view_id) {
-  case UI_VIEW_ID_HOME:
+  case VIEW_HOME_ID:
     render_view(&VIEW_HOME);
     break;
 
-  case UI_VIEW_ID_LIGHTS:
+  case VIEW_LIGHTS_ID:
     render_view(&VIEW_LIGHT);
     break;
 
@@ -129,7 +132,8 @@ lv_obj_t *create_input(lv_obj_t *parent, const UI_Input_t *new_input) {
   return target;
 }
 
-void populate_inputs(lv_obj_t *layout, const UI_View_t *new_view) {
+void populate_inputs(lv_obj_t *layout,
+                     const DATA_TYPE_UI_ViewDesc_t *new_view) {
   for (int i = 0; i < new_view->inputs_total; i++) {
     lv_obj_t *btn = create_input(layout, &new_view->inputs[i]);
 
@@ -139,12 +143,13 @@ void populate_inputs(lv_obj_t *layout, const UI_View_t *new_view) {
   }
 }
 
-lv_obj_t *create_layout(lv_obj_t *cur_screen, const UI_View_t *new_view) {
+lv_obj_t *create_layout(lv_obj_t *cur_screen,
+                        const DATA_TYPE_UI_ViewDesc_t *new_view) {
   lv_obj_t *layout = lv_obj_create(cur_screen);
 
   lv_obj_add_style(layout, &STYLE_LAYOUT, 0);
 
-  if (new_view->layout_style_id == UI_VIEW_LAYOUT_GRID) {
+  if (new_view->layout_id == UI_LAYOUT_GRID) {
     lv_obj_set_layout(layout, LV_LAYOUT_GRID);
     lv_obj_set_grid_dsc_array(layout, new_view->layout_cols,
                               new_view->layout_rows);
@@ -154,7 +159,7 @@ lv_obj_t *create_layout(lv_obj_t *cur_screen, const UI_View_t *new_view) {
 
   lv_obj_center(layout);
 
-  if (new_view->view_id == UI_VIEW_ID_HOME) {
+  if (new_view->view_id == VIEW_HOME_ID) {
     lv_subject_set_int(&subject_is_home, 1);
     lv_obj_remove_flag(lv_layer_top(), LV_OBJ_FLAG_CLICKABLE);
   } else {
@@ -165,7 +170,7 @@ lv_obj_t *create_layout(lv_obj_t *cur_screen, const UI_View_t *new_view) {
   return layout;
 }
 
-void render_view(const UI_View_t *new_view) {
+void render_view(const DATA_TYPE_UI_ViewDesc_t *new_view) {
   lv_obj_t *cur_view = lv_scr_act();
   lv_obj_clean(cur_view);
 

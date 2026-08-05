@@ -1,18 +1,12 @@
 #include "led.h"
+#include "data_types.h"
 
 static led_strip_handle_t strip_hll_handle;
 static led_strip_handle_t strip_hlr_handle;
 static led_strip_handle_t strip_body_handle;
 
-// split headlights into 8, top 3 are turn signal and all are lights
-
-const LED_Color_t LED_COLOR_NONE = {.b = 0, .r = 0, .g = 0};
-const LED_Color_t LED_COLOR_RED = {.b = 0, .r = 150, .g = 0};
-const LED_Color_t LED_COLOR_GREEN = {.b = 0, .r = 0, .g = 150};
-const LED_Color_t LED_COLOR_BLUE = {.b = 150, .r = 0, .g = 0};
-const LED_Color_t LED_COLOR_PURPLE = {.b = 150, .r = 150, .g = 0};
-
-void strip_set_color(LED_Strip_IDs strip_id, const LED_Color_t *color);
+void strip_set_color(DATA_TYPE_ID_LEDStrips led_strip_id,
+                     const DATA_TYPE_LED_Color_t *color);
 
 /* */
 
@@ -62,36 +56,39 @@ esp_err_t LED_Init(void) {
                                   &strip_body_handle);
 }
 
-const LED_Color_t *color_from_id(LED_Color_IDs color_id) {
-  switch (color_id) {
-  case LED_COLOR_ID_NONE:
+const DATA_TYPE_LED_Color_t *
+color_from_id(DATA_TYPE_ID_LEDColors led_color_id) {
+  switch (led_color_id) {
+  case LED_COLOR_NONE_ID:
     return &LED_COLOR_NONE;
 
-  case LED_COLOR_ID_RED:
+  case LED_COLOR_RED_ID:
     return &LED_COLOR_RED;
 
-  case LED_COLOR_ID_GREEN:
+  case LED_COLOR_GREEN_ID:
     return &LED_COLOR_GREEN;
 
-  case LED_COLOR_ID_BLUE:
+  case LED_COLOR_BLUE_ID:
     return &LED_COLOR_BLUE;
 
-  case LED_COLOR_ID_PURPLE:
+  case LED_COLOR_PURPLE_ID:
     return &LED_COLOR_PURPLE;
   }
 
   return &LED_COLOR_NONE;
 }
 
-void LED_SetColor(LED_Strip_IDs strip_id, LED_Color_IDs color_id) {
-  strip_set_color(strip_id, color_from_id(color_id));
+void LED_SetColor(DATA_TYPE_ID_LEDStrips led_strip_id,
+                  DATA_TYPE_ID_LEDColors color_id) {
+  strip_set_color(led_strip_id, color_from_id(color_id));
 }
 
 /* */
 
-void strip_set_color(LED_Strip_IDs strip_id, const LED_Color_t *color) {
-  switch (strip_id) {
-  case LED_SECTION_HL_L:
+void strip_set_color(DATA_TYPE_ID_LEDStrips led_strip_id,
+                     const DATA_TYPE_LED_Color_t *color) {
+  switch (led_strip_id) {
+  case LED_STRIP_HL_L_ID:
     led_strip_clear(strip_hll_handle);
     for (uint8_t i = 0; i < LED_HL_MAX_LEDS; i++) {
       led_strip_set_pixel(strip_hll_handle, i, color->r, color->g, color->b);
@@ -99,7 +96,7 @@ void strip_set_color(LED_Strip_IDs strip_id, const LED_Color_t *color) {
     led_strip_refresh(strip_hll_handle);
     break;
 
-  case LED_SECTION_HL_R:
+  case LED_STRIP_HL_R_ID:
     led_strip_clear(strip_hlr_handle);
     for (uint8_t i = 0; i < LED_HL_MAX_LEDS; i++) {
       led_strip_set_pixel(strip_hlr_handle, i, color->r, color->g, color->b);
@@ -107,7 +104,7 @@ void strip_set_color(LED_Strip_IDs strip_id, const LED_Color_t *color) {
     led_strip_refresh(strip_hlr_handle);
     break;
 
-  case LED_SECTION_BODY:
+  case LED_STRIP_BODY_ID:
     led_strip_clear(strip_body_handle);
     for (uint8_t i = 0; i < LED_BODY_MAX_LEDS; i++) {
       led_strip_set_pixel(strip_body_handle, i, color->r, color->g, color->b);

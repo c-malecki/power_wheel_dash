@@ -1,7 +1,7 @@
 #ifndef __STORAGE_H_
 #define __STORAGE_H_
 
-#define MSD_CS_PIN 14
+#define MSD_CS_PIN (14)
 
 typedef struct
 {

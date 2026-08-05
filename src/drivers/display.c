@@ -1,10 +1,10 @@
 #include "display.h"
-#include "config.h"
 #include "esp_lcd_ili9341.h"
 #include "esp_lcd_panel_io.h"
 #include "esp_lcd_panel_ops.h"
 #include "esp_lcd_touch_xpt2046.h"
 #include "esp_timer.h"
+#include "lvgl.h"
 #include "os.h"
 #include <stdint.h>
 
@@ -48,7 +48,7 @@ esp_err_t init_panel(void) {
       .spi_mode = 0,
       .trans_queue_depth = 10,
   };
-  err = esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)SPI_HOST_PIN,
+  err = esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)SPI2_HOST,
                                  &io_config, &io_handle);
   if (err != ESP_OK) {
     return err;
@@ -87,9 +87,8 @@ esp_err_t init_touch(void) {
   esp_lcd_panel_io_handle_t touch_io_handle = NULL;
   esp_lcd_panel_io_spi_config_t touch_io_config =
       ESP_LCD_TOUCH_IO_SPI_XPT2046_CONFIG(DISPLAY_LCD_T_CS_PIN);
-  ESP_ERROR_CHECK(
-      esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)SPI_HOST_PIN,
-                               &touch_io_config, &touch_io_handle));
+  ESP_ERROR_CHECK(esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)SPI2_HOST,
+                                           &touch_io_config, &touch_io_handle));
 
   esp_lcd_touch_config_t touch_config = {
       .x_max = 240,

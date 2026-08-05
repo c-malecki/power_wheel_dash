@@ -6,30 +6,30 @@
 static Car_Manager_t car_manager;
 
 void Car_Manager_Init(void) {
-  car_manager.headlight_left.light_id = CAR_LIGHT_ID_HLL;
-  car_manager.headlight_right.light_id = CAR_LIGHT_ID_HLR;
-  car_manager.bodylight.light_id = CAR_LIGHT_ID_BODY;
+  car_manager.hll_strip_id = LED_STRIP_HL_L_ID;
+  car_manager.hlr_strip_id = LED_STRIP_HL_R_ID;
+  car_manager.body_strip_id = LED_STRIP_BODY_ID;
 }
 
-void Car_Manager_SetLight(Car_Light_IDs car_light_id,
-                          Car_Light_Color_IDs car_light_color_id,
-                          bool car_light_on) {
-  LED_SetColor(car_light_id, car_light_color_id);
+void Car_Manager_SetLED(DATA_TYPE_ID_LEDStrips led_strip_id,
+                        DATA_TYPE_ID_LEDColors led_color_id,
+                        bool led_strip_on) {
+  LED_SetColor(led_strip_id, led_color_id);
 
-  switch (car_light_id) {
-  case CAR_LIGHT_ID_HLL:
-    car_manager.headlight_left.color_id = car_light_color_id;
-    car_manager.headlight_left.is_on = car_light_on;
+  switch (led_strip_id) {
+  case LED_STRIP_HL_L_ID:
+    car_manager.hll_strip_id = led_color_id;
+    car_manager.hll_is_on = led_strip_on;
     break;
 
-  case CAR_LIGHT_ID_HLR:
-    car_manager.headlight_right.color_id = car_light_color_id;
-    car_manager.headlight_right.is_on = car_light_on;
+  case LED_STRIP_HL_R_ID:
+    car_manager.hlr_strip_id = led_color_id;
+    car_manager.hlr_is_on = led_strip_on;
     break;
 
-  case CAR_LIGHT_ID_BODY:
-    car_manager.bodylight.color_id = car_light_color_id;
-    car_manager.bodylight.is_on = car_light_on;
+  case LED_STRIP_BODY_ID:
+    car_manager.body_strip_id = led_color_id;
+    car_manager.body_is_on = led_strip_on;
     break;
   }
 }

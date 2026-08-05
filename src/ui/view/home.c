@@ -6,7 +6,7 @@
 UI_Input_t const BUTTON_NAV_HOME = {
     .type_id = UI_INPUT_TYPE_BUTTON,
     .action_type_id = UI_INPUT_ACTION_NAVIGATE,
-    .action_data = UI_VIEW_ID_HOME,
+    .action_data = VIEW_HOME_ID,
     .name = "home",
     .color = (0x607D8B),
     .symbol = LV_SYMBOL_HOME,
@@ -17,7 +17,7 @@ static const UI_Input_t home_inputs[] = {
     {
         .type_id = UI_INPUT_TYPE_BUTTON,
         .action_type_id = UI_INPUT_ACTION_NAVIGATE,
-        .action_data = UI_VIEW_ID_LIGHTS,
+        .action_data = VIEW_LIGHTS_ID,
         .col_pos = 0,
         .row_pos = 0,
         .color = 0xFFC107,
@@ -28,7 +28,7 @@ static const UI_Input_t home_inputs[] = {
     {
         .type_id = UI_INPUT_TYPE_BUTTON,
         .action_type_id = UI_INPUT_ACTION_NAVIGATE,
-        .action_data = UI_VIEW_ID_LIGHTS,
+        .action_data = VIEW_LIGHTS_ID,
         .col_pos = 1,
         .row_pos = 0,
         .color = 0x2196F3,
@@ -39,7 +39,7 @@ static const UI_Input_t home_inputs[] = {
     {
         .type_id = UI_INPUT_TYPE_BUTTON,
         .action_type_id = UI_INPUT_ACTION_NAVIGATE,
-        .action_data = UI_VIEW_ID_LIGHTS,
+        .action_data = VIEW_LIGHTS_ID,
         .col_pos = 2,
         .row_pos = 0,
         .color = 0x607D8B,
@@ -48,9 +48,9 @@ static const UI_Input_t home_inputs[] = {
         .style = &STYLE_NAV_BUTTON,
     }};
 
-UI_View_t const VIEW_HOME = {
-    .view_id = UI_VIEW_ID_HOME,
-    .layout_style_id = UI_VIEW_LAYOUT_GRID,
+DATA_TYPE_UI_ViewDesc_t const VIEW_HOME = {
+    .view_id = VIEW_HOME_ID,
+    .layout_id = UI_LAYOUT_GRID,
     .layout_cols = STYLE_LAYOUT_COLS_3,
     .layout_rows = STYLE_LAYOUT_ROWS_2,
     .inputs_total = 3,
