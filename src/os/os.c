@@ -4,7 +4,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
-#include "light.h"
+#include "led.h"
 #include "view_manager.h"
 
 static QueueHandle_t OS_event_queue = NULL;
@@ -24,7 +24,7 @@ static void os_task(void *arg) {
       case OS_EVENT_NAVIGATE:
         View_Manager_Navigate(event.data.view_id);
         break;
-      case OS_EVENT_LIGHT_CHANGE:
+      case OS_EVENT_LED_CHANGE:
         // OS_state.headlight_color = event.data.color;
         break;
       default:
@@ -59,7 +59,7 @@ esp_err_t OS_Init(void) {
     return err;
   }
 
-  err = Light_Init();
+  err = LED_Init();
   if (err != ESP_OK) {
     return err;
   }

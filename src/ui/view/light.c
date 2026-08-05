@@ -1,4 +1,4 @@
-#include "lights.h"
+#include "light.h"
 #include "nav_button.h"
 #include "ui.h"
 
@@ -27,7 +27,7 @@ static const UI_Input_t light_inputs[] = {
     },
 };
 
-UI_View_t const VIEW_LIGHTS = {
+UI_View_t const VIEW_LIGHT = {
     .view_id = UI_VIEW_ID_LIGHTS,
     .layout_style = UI_VIEW_LAYOUT_GRID,
     .layout_cols = STYLE_LAYOUT_COLS_2,

@@ -6,13 +6,13 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "ui.h"
-#include "light.h"
+#include "led.h"
 
 extern SemaphoreHandle_t OS_STATE_MUTEX;
 
 typedef enum {
     OS_EVENT_NAVIGATE,
-    OS_EVENT_LIGHT_CHANGE,
+    OS_EVENT_LED_CHANGE,
     OS_EVENT_SPEED_UPDATE,
 } OS_Event_Type_t;
 
@@ -23,7 +23,7 @@ typedef struct
         UI_View_IDs view_id;
         // todo: check for lvgl deduplication of my
         // const declarations for colors
-        Light_Colors color;
+        LED_Colors color;
     } data;
 } OS_Event_t;
 

@@ -1,7 +1,7 @@
 #include "view_manager.h"
 #include "core/lv_observer.h"
 #include "home.h"
-#include "lights.h"
+#include "light.h"
 #include "os.h"
 #include "ui.h"
 
@@ -20,8 +20,8 @@ static void input_touch_event_cb(lv_event_t *event) {
       os_event.data.view_id = (UI_View_IDs)input->action_data;
       post_event = true;
     } else if (input->action_type == UI_VIEW_ACTION_SET_VALUE) {
-      os_event.type = OS_EVENT_LIGHT_CHANGE;
-      os_event.data.color = (Light_Colors)input->action_data;
+      os_event.type = OS_EVENT_LED_CHANGE;
+      os_event.data.color = (LED_Colors)input->action_data;
       post_event = true;
     }
 
@@ -45,7 +45,7 @@ void View_Manager_Navigate(UI_View_IDs new_view_id) {
     break;
 
   case UI_VIEW_ID_LIGHTS:
-    render_view(&VIEW_LIGHTS);
+    render_view(&VIEW_LIGHT);
     break;
 
   default:

@@ -1,7 +1,7 @@
 idf_component_register(
   SRCS "main.c"
     "../src/drivers/display.c"
-    "../src/drivers/light.c"
+    "../src/drivers/led.c"
     "../src/drivers/sound.c"
     "../src/drivers/storage.c"
     "../src/os/os.c"
@@ -10,7 +10,7 @@ idf_component_register(
     "../src/ui/element/home_button.c"
     "../src/ui/element/nav_button.c"
     "../src/ui/view/home.c"
-    "../src/ui/view/lights.c"
+    "../src/ui/view/light.c"
 
   INCLUDE_DIRS "../src"
     "../src/drivers"
