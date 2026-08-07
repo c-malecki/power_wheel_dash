@@ -5,7 +5,7 @@
 #include "esp_lcd_touch_xpt2046.h"
 #include "esp_timer.h"
 #include "lvgl.h"
-#include "os.h"
+#include "system_controller.h"
 #include <stdint.h>
 
 static esp_lcd_panel_io_handle_t io_handle = NULL;
@@ -192,15 +192,18 @@ esp_err_t Display_Init() {
 
   init_lvgl();
 
+  LV_FONT_DECLARE(icon_lightbulb);
+  LV_FONT_DECLARE(icon_sun);
+
   return ESP_OK;
 }
 
 static void display_task(void *arg) {
   while (1) {
     vTaskDelay(pdMS_TO_TICKS(10));
-    if (xSemaphoreTake(OS_STATE_MUTEX, pdMS_TO_TICKS(10)) == pdTRUE) {
+    if (xSemaphoreTake(system_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
       lv_timer_handler();
-      xSemaphoreGive(OS_STATE_MUTEX);
+      xSemaphoreGive(system_mutex);
     }
   }
 }
