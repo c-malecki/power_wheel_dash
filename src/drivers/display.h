@@ -13,6 +13,4 @@
 
 esp_err_t Display_Init();
 
-void Display_TaskRun(void);
-
 #endif // __DISPLAY_H_

@@ -5,7 +5,6 @@
 #include "esp_lcd_touch_xpt2046.h"
 #include "esp_timer.h"
 #include "lvgl.h"
-#include "system_controller.h"
 #include <stdint.h>
 
 static esp_lcd_panel_io_handle_t io_handle = NULL;
@@ -15,16 +14,77 @@ static esp_lcd_touch_handle_t touch_handle = NULL;
 static lv_display_t *disp = NULL;
 static lv_indev_t *indev = NULL;
 
-static void display_task(void *arg);
+esp_err_t init_panel(void);
+esp_err_t init_touch(void);
+void init_lvgl(void);
 
 /* INTERFACE */
 
-void Display_TaskRun(void) {
-  xTaskCreatePinnedToCore(display_task, "display task", 16384, NULL, 5, NULL,
-                          1);
+esp_err_t Display_Init() {
+  esp_err_t err = init_panel();
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  err = init_touch();
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  init_lvgl();
+
+  LV_FONT_DECLARE(icon_lightbulb);
+  LV_FONT_DECLARE(icon_sun);
+
+  return ESP_OK;
 }
 
-/* SETUP STUFF */
+/* SETUP */
+
+static void lvgl_tick_cb(void *arg) { lv_tick_inc(2); }
+
+static void touchpad_read_cb(lv_indev_t *indev, lv_indev_data_t *data) {
+  esp_lcd_touch_point_data_t point;
+  uint8_t point_count = 0;
+
+  esp_err_t err = esp_lcd_touch_read_data(touch_handle);
+  if (err != ESP_OK) {
+    data->state = LV_INDEV_STATE_RELEASED;
+    return;
+  }
+
+  bool pressed =
+      esp_lcd_touch_get_data(touch_handle, &point, &point_count, 1) == ESP_OK &&
+      point_count > 0;
+  if (pressed) {
+    data->point.x = point.x;
+    data->point.y = point.y;
+    data->state = LV_INDEV_STATE_PRESSED;
+  } else {
+    data->state = LV_INDEV_STATE_RELEASED;
+  }
+}
+
+static bool flush_ready_cb(esp_lcd_panel_io_handle_t panel_io,
+                           esp_lcd_panel_io_event_data_t *edata,
+                           void *user_ctx) {
+  lv_display_t *disp = (lv_display_t *)user_ctx;
+  lv_display_flush_ready(disp);
+  return false;
+}
+
+static void flush_exec_cb(lv_display_t *disp, const lv_area_t *area,
+                          uint8_t *px_map) {
+  esp_lcd_panel_handle_t panel =
+      (esp_lcd_panel_handle_t)lv_display_get_user_data(disp);
+
+  uint32_t w = lv_area_get_width(area);
+  uint32_t h = lv_area_get_height(area);
+  lv_draw_sw_rgb565_swap(px_map, w * h);
+
+  esp_lcd_panel_draw_bitmap(panel, area->x1, area->y1, area->x2 + 1,
+                            area->y2 + 1, (uint16_t *)px_map);
+}
 
 esp_err_t init_panel(void) {
   gpio_config_t bk_gpio_config = {
@@ -107,51 +167,6 @@ esp_err_t init_touch(void) {
                                        &touch_handle);
 }
 
-static void lvgl_tick_cb(void *arg) { lv_tick_inc(2); }
-
-static bool flush_ready_cb(esp_lcd_panel_io_handle_t panel_io,
-                           esp_lcd_panel_io_event_data_t *edata,
-                           void *user_ctx) {
-  lv_display_t *disp = (lv_display_t *)user_ctx;
-  lv_display_flush_ready(disp);
-  return false;
-}
-
-static void flush_exec_cb(lv_display_t *disp, const lv_area_t *area,
-                          uint8_t *px_map) {
-  esp_lcd_panel_handle_t panel =
-      (esp_lcd_panel_handle_t)lv_display_get_user_data(disp);
-
-  uint32_t w = lv_area_get_width(area);
-  uint32_t h = lv_area_get_height(area);
-  lv_draw_sw_rgb565_swap(px_map, w * h);
-
-  esp_lcd_panel_draw_bitmap(panel, area->x1, area->y1, area->x2 + 1,
-                            area->y2 + 1, (uint16_t *)px_map);
-}
-
-static void touchpad_read_cb(lv_indev_t *indev, lv_indev_data_t *data) {
-  esp_lcd_touch_point_data_t point;
-  uint8_t point_count = 0;
-
-  esp_err_t err = esp_lcd_touch_read_data(touch_handle);
-  if (err != ESP_OK) {
-    data->state = LV_INDEV_STATE_RELEASED;
-    return;
-  }
-
-  bool pressed =
-      esp_lcd_touch_get_data(touch_handle, &point, &point_count, 1) == ESP_OK &&
-      point_count > 0;
-  if (pressed) {
-    data->point.x = point.x;
-    data->point.y = point.y;
-    data->state = LV_INDEV_STATE_PRESSED;
-  } else {
-    data->state = LV_INDEV_STATE_RELEASED;
-  }
-}
-
 void init_lvgl(void) {
   lv_init();
 
@@ -177,33 +192,4 @@ void init_lvgl(void) {
   esp_timer_handle_t lvgl_tick_timer = NULL;
   ESP_ERROR_CHECK(esp_timer_create(&lvgl_tick_timer_args, &lvgl_tick_timer));
   ESP_ERROR_CHECK(esp_timer_start_periodic(lvgl_tick_timer, 2000));
-}
-
-esp_err_t Display_Init() {
-  esp_err_t err = init_panel();
-  if (err != ESP_OK) {
-    return err;
-  }
-
-  err = init_touch();
-  if (err != ESP_OK) {
-    return err;
-  }
-
-  init_lvgl();
-
-  LV_FONT_DECLARE(icon_lightbulb);
-  LV_FONT_DECLARE(icon_sun);
-
-  return ESP_OK;
-}
-
-static void display_task(void *arg) {
-  while (1) {
-    vTaskDelay(pdMS_TO_TICKS(10));
-    if (xSemaphoreTake(system_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
-      lv_timer_handler();
-      xSemaphoreGive(system_mutex);
-    }
-  }
 }
