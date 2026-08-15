@@ -7,16 +7,21 @@ idf_component_register(
     "../src/os/os_kernel.c"
     "../src/os/os_manager.c"
     "../src/os/os_event.c"
-    "../src/light_controller/light_controller.c"
-    "../src/ui_controller/ui_controller.c"
-    "../src/ui_controller/ui_definitions.c"
-
+    "../src/os/controller/light_controller.c"
+    "../src/os/controller/ui_controller.c"
+    "../src/ui/ui_definitions.c"
+    "../src/ui/ui_tables.c"
+    "../src/ui/screen/screen_home.c"
+    "../src/ui/screen/screen_light_select.c"
+    "../src/ui/widget/color_picker.c"
 
   INCLUDE_DIRS "../src"
     "../src/drivers"
     "../src/os"
-    "../src/light_controller"
-    "../src/ui_controller"
+    "../src/os/controller"
+    "../src/ui"
+    "../src/ui/screen"
+    "../src/ui/widget"
 
   REQUIRES esp_lcd esp_timer
 )

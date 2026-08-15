@@ -42,11 +42,11 @@ static void os_manager_task(void *arg) {
   while (1) {
     if (xQueueReceive(os_event_queue, &os_event, portMAX_DELAY)) {
       xSemaphoreTake(os_mutex, portMAX_DELAY);
-      ESP_LOGI("OS_MANAGER", "os_manager_task queue");
+      ESP_LOGI("OS_MANAGER", "os_manager_task queue receive event");
 
       switch (os_event.rx_controller_id) {
       case OS_CONTROLLER_UI:
-        UI_Controller_RX(&os_event);
+        // UI_Controller_RX(&os_event);
         break;
 
       case OS_CONTROLLER_LIGHT:

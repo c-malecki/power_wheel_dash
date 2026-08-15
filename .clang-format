@@ -1,3 +1,39 @@
+Language: Cpp
+BasedOnStyle: LLVM 
+
+
+IndentWidth: 4
+ColumnLimit: 100
+UseTab: Never
+ContinuationIndentWidth: 4 
+
+
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+AfterControlStatement: Never
+AfterFunction: true
+BeforeElse: false
+AfterStruct: false
+AfterEnum: false 
+
+
+SpaceBeforeParens: ControlStatements
+SpaceAfterCStyleCast: false
+SpaceBeforeAssignmentOperators: true 
+
+
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments:
+Enabled: true
+AcrossEmptyLines: false
+AcrossComments: false
+AlignConsecutiveDeclarations: false 
+
+
+<!-- AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: Empty
+
 BasedOnStyle: WebKit
 Language: Cpp
 ColumnLimit: 100
@@ -21,4 +57,4 @@ AlignAfterOpenBracket: true
 AlwaysBreakTemplateDeclarations: true
 AllowShortEnumsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: Empty
-SortIncludes: false
+SortIncludes: false -->

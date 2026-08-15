@@ -1,4 +1,0 @@
-#ifndef __LIGHT_CONTROLLER_H_
-#define __LIGHT_CONTROLLER_H_
-
-#endif // __LIGHT_CONTROLLER_H_
