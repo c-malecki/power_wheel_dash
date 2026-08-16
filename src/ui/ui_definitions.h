@@ -1,6 +1,7 @@
 #ifndef __UI_DEFINITIONS_H_
 #define __UI_DEFINITIONS_H_
 
+#include "global.h"
 #include "lvgl.h"
 #include "os_event.h"
 #include <stddef.h>
@@ -24,23 +25,7 @@ extern const int32_t ui_style_layout_cols_3[];
 extern const int32_t ui_style_layout_rows_1[];
 extern const int32_t ui_style_layout_rows_2[];
 
-extern lv_color_t const ui_style_color_gray;
-extern lv_color_t const ui_style_color_yellow;
-extern lv_color_t const ui_style_color_blue;
-
 /* ENUMS/IDs */
-
-typedef enum {
-  UI_STYLE_COLOR_NONE = 0,
-  UI_STYLE_COLOR_WHITE,
-  UI_STYLE_COLOR_RED,
-  UI_STYLE_COLOR_ORANGE,
-  UI_STYLE_COLOR_YELLOW,
-  UI_STYLE_COLOR_GREEN,
-  UI_STYLE_COLOR_BLUE,
-  UI_STYLE_COLOR_VIOLET,
-  UI_STYLE_COLOR_GRAY,
-} UI_Style_Color_ID;
 
 typedef enum {
   UI_STYLE_LAYOUT_GRID_NONE = 0,
@@ -86,7 +71,7 @@ extern const size_t ui_screen_table_size;
 
 lv_obj_t *UI_Create_Grid_2x1(lv_obj_t *screen);
 lv_obj_t *UI_Create_Grid_3x2(lv_obj_t *screen);
-void UI_Set_Element_BG_Color(lv_obj_t *element, UI_Style_Color_ID color_id);
+void UI_Set_Element_BG_Color(lv_obj_t *element, G_Color_ID color_id);
 
 #endif // __UI_DEFINITIONS_H_
 

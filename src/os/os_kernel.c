@@ -1,7 +1,7 @@
 #include "os_kernel.h"
 #include "display.h"
 #include "driver/spi_master.h"
-// #include "esp_log.h"
+#include "esp_log.h"
 #include "led.h"
 
 #define SPI_MOSI_PIN 11
@@ -21,16 +21,19 @@ esp_err_t OS_Kernel_Init(void) {
   if (err != ESP_OK) {
     return err;
   }
+  ESP_LOGI("OS_KERNEL", "spi initialized");
 
   err = Display_Init();
   if (err != ESP_OK) {
     return err;
   }
+  ESP_LOGI("OS_KERNEL", "display initialized");
 
   err = LED_Init();
   if (err != ESP_OK) {
     return err;
   }
+  ESP_LOGI("OS_KERNEL", "leds initialized");
 
   return ESP_OK;
 }

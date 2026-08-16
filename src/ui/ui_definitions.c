@@ -1,4 +1,6 @@
 #include "ui_definitions.h"
+#include "global.h"
+#include "misc/lv_color.h"
 
 /*
 LV_STYLE_CONST_WIDTH
@@ -73,10 +75,6 @@ const int32_t ui_style_layout_rows_1[] = {LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
 const int32_t ui_style_layout_rows_2[] = {LV_GRID_FR(1), LV_GRID_FR(1),
                                           LV_GRID_TEMPLATE_LAST};
 
-const lv_color_t ui_style_color_gray = LV_COLOR_MAKE(0x60, 0x7D, 0x8B);
-const lv_color_t ui_style_color_yellow = LV_COLOR_MAKE(0xFF, 0xC1, 0x07);
-const lv_color_t ui_style_color_blue = LV_COLOR_MAKE(0xFF, 0xC1, 0x07);
-
 lv_obj_t *UI_Create_Grid_2x1(lv_obj_t *screen) {
   lv_obj_t *layout = lv_obj_create(screen);
   lv_obj_add_style(layout, &ui_style_layout_grid, 0);
@@ -93,23 +91,46 @@ lv_obj_t *UI_Create_Grid_3x2(lv_obj_t *screen) {
   return layout;
 }
 
-// todo: global mapping for colors for reference between setting LEDs and
-// setting colors for UI styles
-void UI_Set_Element_BG_Color(lv_obj_t *element, UI_Style_Color_ID color_id) {
-  // switch (color_id) {
-  // case UI_STYLE_COLOR_YELLOW:
-  //   lv_obj_set_style_bg_color(element, ui_style_color_yellow, 0);
-  //   break;
+void UI_Set_Element_BG_Color(lv_obj_t *element, G_Color_ID color_id) {
+  lv_color_t color;
 
-  // case UI_STYLE_COLOR_BLUE:
-  //   lv_obj_set_style_bg_color(element, ui_style_color_blue, 0);
-  //   break;
+  switch (color_id) {
+  case G_COLOR_WHITE:
+    color = lv_color_make(g_color_white.r, g_color_white.g, g_color_white.b);
+    break;
 
-  // case UI_STYLE_COLOR_GRAY:
-  //   lv_obj_set_style_bg_color(element, ui_style_color_gray, 0);
-  //   break;
+  case G_COLOR_RED:
+    color = lv_color_make(g_color_red.r, g_color_red.g, g_color_red.b);
+    break;
 
-  // case UI_STYLE_COLOR_NONE:
-  //   break;
-  // }
+  case G_COLOR_ORANGE:
+    color = lv_color_make(g_color_orange.r, g_color_orange.g, g_color_orange.b);
+    break;
+
+  case G_COLOR_YELLOW:
+    color = lv_color_make(g_color_yellow.r, g_color_yellow.g, g_color_yellow.b);
+    break;
+
+  case G_COLOR_GREEN:
+    color = lv_color_make(g_color_green.r, g_color_green.g, g_color_green.b);
+    break;
+
+  case G_COLOR_BLUE:
+    color = lv_color_make(g_color_blue.r, g_color_blue.g, g_color_blue.b);
+    break;
+
+  case G_COLOR_VIOLET:
+    color = lv_color_make(g_color_violet.r, g_color_violet.g, g_color_violet.b);
+    break;
+
+  case G_COLOR_GRAY:
+    color = lv_color_make(g_color_gray.r, g_color_gray.g, g_color_gray.b);
+    break;
+
+  case G_COLOR_NONE:
+    color = lv_color_make(g_color_none.r, g_color_none.g, g_color_none.b);
+    break;
+  }
+
+  lv_obj_set_style_bg_color(element, color, 0);
 }

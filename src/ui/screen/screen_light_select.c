@@ -1,9 +1,7 @@
 #include "screen_light_select.h"
 #include "color_picker.h"
-#include "core/lv_observer.h"
 #include "esp_log.h"
-#include "font/lv_symbol_def.h"
-#include "layouts/grid/lv_grid.h"
+#include "global.h"
 #include "os_event.h"
 #include "ui_definitions.h"
 #include <stdint.h>
@@ -18,15 +16,15 @@ const char *color_picker_map[] = {"NONE",   "WHITE", "RED",  "ORANGE", "\n",
                                   "YELLOW", "GREEN", "BLUE", "VIOLET", ""};
 
 static const color_picker_map_table_t color_picker_lookup_table[] = {
-    {"NONE", UI_STYLE_COLOR_NONE},     {"WHITE", UI_STYLE_COLOR_WHITE},
-    {"RED", UI_STYLE_COLOR_RED},       {"ORANGE", UI_STYLE_COLOR_ORANGE},
-    {"YELLOW", UI_STYLE_COLOR_YELLOW}, {"GREEN", UI_STYLE_COLOR_GREEN},
-    {"BLUE", UI_STYLE_COLOR_BLUE},     {"VIOLET", UI_STYLE_COLOR_VIOLET},
+    {"NONE", G_COLOR_NONE},     {"WHITE", G_COLOR_WHITE},
+    {"RED", G_COLOR_RED},       {"ORANGE", G_COLOR_ORANGE},
+    {"YELLOW", G_COLOR_YELLOW}, {"GREEN", G_COLOR_GREEN},
+    {"BLUE", G_COLOR_BLUE},     {"VIOLET", G_COLOR_VIOLET},
 };
 
 // local scope/not injected elsewhere
 static void light_select_btn_event_cb(lv_event_t *lv_event);
-static UI_Style_Color_ID get_mapped_color_id(const char *map_entry);
+static G_Color_ID get_mapped_color_id(const char *map_entry);
 
 // callback given to the color picker so that it doesn't hold state
 // on a file level
@@ -37,7 +35,7 @@ static void color_picker_injection_cb(lv_event_t *lv_event) {
   uint32_t id = lv_buttonmatrix_get_selected_button(bm);
   const char *text = lv_buttonmatrix_get_button_text(bm, id);
 
-  UI_Style_Color_ID color_id = get_mapped_color_id(text);
+  G_Color_ID color_id = get_mapped_color_id(text);
 
   OS_Event_t os_event = OS_Event_Create(OS_CONTROLLER_UI, OS_CONTROLLER_LIGHT,
                                         OS_EVENT_LIGHT_SELECT, color_id);
@@ -72,7 +70,7 @@ void Light_Select_Screen_Render(lv_obj_t *screen,
   // headlights button
   lv_obj_t *headlight_btn = lv_button_create(layout);
   lv_obj_add_style(headlight_btn, &ui_style_nav_button, 0);
-  UI_Set_Element_BG_Color(headlight_btn, UI_STYLE_COLOR_YELLOW);
+  UI_Set_Element_BG_Color(headlight_btn, G_COLOR_YELLOW);
   lv_obj_add_event_cb(headlight_btn, light_select_btn_event_cb,
                       LV_EVENT_CLICKED,
                       (void *)UI_ELEMENT_LIGHT_SCREEN_HEADLIGHTS_BTN);
@@ -87,7 +85,7 @@ void Light_Select_Screen_Render(lv_obj_t *screen,
   // bodylights button
   lv_obj_t *bodylight_btn = lv_button_create(layout);
   lv_obj_add_style(bodylight_btn, &ui_style_nav_button, 0);
-  UI_Set_Element_BG_Color(bodylight_btn, UI_STYLE_COLOR_YELLOW);
+  UI_Set_Element_BG_Color(bodylight_btn, G_COLOR_YELLOW);
   lv_obj_add_event_cb(bodylight_btn, light_select_btn_event_cb,
                       LV_EVENT_CLICKED,
                       (void *)UI_ELEMENT_LIGHT_SCREEN_BODYLIGHTS_BTN);
@@ -128,11 +126,11 @@ static void light_select_btn_event_cb(lv_event_t *lv_event) {
   }
 }
 
-static UI_Style_Color_ID get_mapped_color_id(const char *map_entry) {
+static G_Color_ID get_mapped_color_id(const char *map_entry) {
   for (uint8_t i = 0; i < 8; i++) {
     if (strcmp(map_entry, color_picker_lookup_table[i].entry) == 0) {
       return color_picker_lookup_table[i].color_id;
     }
   }
-  return UI_STYLE_COLOR_NONE;
+  return G_COLOR_NONE;
 }

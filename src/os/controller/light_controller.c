@@ -1,15 +1,25 @@
 #include "light_controller.h"
+#include "global.h"
 #include "led.h"
+#include "os_event.h"
 
 static bool headlight_on = false;
-static LED_Color_ID headlight_color = LED_COLOR_NONE;
+static G_Color_ID headlight_color = G_COLOR_NONE;
 static bool bodylight_on = false;
-static LED_Color_ID bodylight_color = LED_COLOR_NONE;
+static G_Color_ID bodylight_color = G_COLOR_NONE;
 
-void Light_Controller_Init(void) {}
+void Light_Controller_Init(void) { LED_SetHeadlights(G_COLOR_ORANGE); }
 
+// todo: add select which light and not just default to one selection
 void Light_Controller_RX(OS_Event_t *os_event) {
-  LED_Color_ID color_id;
+  switch (os_event->event_id) {
+  case OS_EVENT_LIGHT_SELECT:
+    LED_SetHeadlights((G_Color_ID)os_event->payload);
+    break;
 
-  // os_event->payload = Light_LED_Color_ID
+  default:
+    break;
+  }
+
+  // os_event->payload = Light_G_Color_ID
 }

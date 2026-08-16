@@ -1,5 +1,6 @@
 #include "screen_home.h"
 #include "esp_log.h"
+#include "global.h"
 #include "os_event.h"
 #include "ui_definitions.h"
 #include <assert.h>
@@ -38,7 +39,7 @@ void Home_Screen_Render(lv_obj_t *screen,
   // lights button
   lv_obj_t *light_select_btn = lv_button_create(layout);
   lv_obj_add_style(light_select_btn, &ui_style_nav_button, 0);
-  UI_Set_Element_BG_Color(light_select_btn, UI_STYLE_COLOR_YELLOW);
+  UI_Set_Element_BG_Color(light_select_btn, G_COLOR_YELLOW);
   lv_obj_add_event_cb(light_select_btn, home_nav_btn_event_cb, LV_EVENT_CLICKED,
                       (void *)UI_SCREEN_LIGHT_SELECT);
 

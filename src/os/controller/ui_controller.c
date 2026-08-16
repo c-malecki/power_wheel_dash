@@ -16,10 +16,9 @@ static void sys_home_touch_cb(lv_event_t *lv_event);
 static const UI_Screen_Entry_t *
 find_screen_by_screen_id(UI_Screen_ID screen_id);
 
-/* MAIN FUNCTIONS */
-
 static void ui_controller_intercept(OS_Event_t *os_event) {
   ESP_LOGI("UI_CONTROLLER", "ui_controller_intercept os_event");
+
   // handle local/ui changes and then pass up to OS manager
   if (os_event->event_id == OS_EVENT_NAVIGATE) {
     UI_Screen_ID new_screen_id = os_event->payload;
@@ -27,37 +26,18 @@ static void ui_controller_intercept(OS_Event_t *os_event) {
     return;
   }
 
-  xQueueSend(os_event_queue, &os_event, 0);
+  if (xQueueSend(os_event_queue, os_event, pdMS_TO_TICKS(50)) != pdTRUE) {
+    ESP_LOGW("UI_CONTROLLER", "event queue full, dropped event id=%d",
+             os_event->event_id);
+  }
 }
-
-// void UI_Controller_RX(OS_Event_t *os_event) {
-// currently just defaulting to only rendering a whole screen
-// so no other possible ways to handle it for now
-//   const UI_Screen_Entry_t *new_screen =
-//       find_screen_by_screen_id(os_event->payload);
-
-//   if (new_screen == NULL) {
-//     ESP_LOGI("UI_Controller_RX", "failed to find screen %d",
-//     os_event->payload); const UI_Screen_Entry_t *home_screen =
-//         find_screen_by_screen_id(UI_SCREEN_HOME);
-//     if (home_screen == NULL) {
-//       // ??
-//     }
-//     render(home_screen);
-//     return;
-//   }
-
-//   ESP_LOGI("UI_Controller_RX", "navigate to screen: %d",
-//   new_screen->screen_id); render(new_screen);
-
-// }
 
 void UI_Controller_Init(void) {
   assert(ui_screen_table != NULL);
 
   lv_obj_t *home_button = lv_button_create(lv_layer_top());
   lv_obj_add_style(home_button, &ui_style_sys_button, 0);
-  UI_Set_Element_BG_Color(home_button, UI_STYLE_COLOR_GRAY);
+  UI_Set_Element_BG_Color(home_button, G_COLOR_GRAY);
   lv_obj_set_pos(home_button, 10, 10);
   lv_obj_add_event_cb(home_button, sys_home_touch_cb, LV_EVENT_CLICKED, NULL);
 

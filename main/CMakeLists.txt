@@ -1,5 +1,6 @@
 idf_component_register(
   SRCS "main.c"
+    "../src/global.c"
     "../src/drivers/display.c"
     "../src/drivers/led.c"
     "../src/drivers/sound.c"
