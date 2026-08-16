@@ -31,4 +31,6 @@ extern const G_Color_t g_color_blue;
 extern const G_Color_t g_color_violet;
 extern const G_Color_t g_color_gray;
 
+G_Color_t Global_Color_Lookup(G_Color_ID color_id);
+
 #endif // __UI_TYPES_H_

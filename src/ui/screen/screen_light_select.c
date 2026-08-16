@@ -59,6 +59,7 @@ void Light_Select_Screen_Render(lv_obj_t *screen,
 
   // create color picker and hide it
   lv_obj_t *color_picker = Color_Picker_Create(lv_layer_top(), color_picker_map,
+                                               color_picker_lookup_table, 8,
                                                color_picker_injection_cb);
   lv_subject_init_int(&btn_is_selected, 0);
   lv_obj_bind_flag_if_eq(color_picker, &btn_is_selected, LV_OBJ_FLAG_HIDDEN, 0);

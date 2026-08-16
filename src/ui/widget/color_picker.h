@@ -12,6 +12,7 @@ typedef struct {
 } color_picker_map_table_t;
 
 lv_obj_t *Color_Picker_Create(lv_obj_t *parent, const char *map[],
-                              color_picker_cb cb);
+                              const color_picker_map_table_t *table,
+                              size_t table_len, color_picker_cb cb);
 
 #endif // __UI_COLOR_PICKER_H_
