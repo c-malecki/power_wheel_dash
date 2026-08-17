@@ -1,0 +1,1 @@
+update schematic to include second SPI bus for MicroSD

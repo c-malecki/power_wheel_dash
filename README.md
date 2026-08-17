@@ -26,8 +26,8 @@ https://www.amazon.com/dp/B0FFMLDYNY?ref_=ppx_hzsearch_conn_dt_b_fed_asin_title_
 
 // features
 
-driver and passenger fans
-
+driver and passenger fans?
+bubble blower
 
 
 wi-fi kill switch

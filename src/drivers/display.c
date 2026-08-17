@@ -1,8 +1,10 @@
 #include "display.h"
+#include "driver/spi_master.h"
 #include "esp_lcd_ili9341.h"
 #include "esp_lcd_panel_io.h"
 #include "esp_lcd_panel_ops.h"
 #include "esp_lcd_touch_xpt2046.h"
+#include "esp_log.h"
 #include "esp_timer.h"
 #include "lvgl.h"
 #include <stdint.h>
@@ -21,7 +23,21 @@ void init_lvgl(void);
 /* INTERFACE */
 
 esp_err_t Display_Init() {
-  esp_err_t err = init_panel();
+  spi_bus_config_t spi_bus_lcd = {
+      .sclk_io_num = SPI_CLK_PIN_LCD,
+      .mosi_io_num = SPI_MOSI_PIN_LCD,
+      .miso_io_num = SPI_MISO_PIN_LCD,
+      .quadwp_io_num = -1,
+      .quadhd_io_num = -1,
+      .max_transfer_sz = 240 * 320 * sizeof(uint16_t),
+  };
+  esp_err_t err = spi_bus_initialize(SPI2_HOST, &spi_bus_lcd, SPI_DMA_CH_AUTO);
+  if (err != ESP_OK) {
+    return err;
+  }
+  ESP_LOGI("DISPLAY DRIVER", "lcd spi bus initialized");
+
+  err = init_panel();
   if (err != ESP_OK) {
     return err;
   }

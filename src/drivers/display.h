@@ -3,6 +3,10 @@
 
 #include "esp_err.h"
 
+#define SPI_MOSI_PIN_LCD (11)
+#define SPI_CLK_PIN_LCD (12)
+#define SPI_MISO_PIN_LCD (13)
+
 #define DISPLAY_LCD_DC_PIN (8)
 #define DISPLAY_LCD_RST_PIN (9)
 #define DISPLAY_LCD_CS_PIN (10)

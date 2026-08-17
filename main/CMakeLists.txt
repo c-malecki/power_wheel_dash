@@ -24,5 +24,5 @@ idf_component_register(
     "../src/ui/screen"
     "../src/ui/widget"
 
-  REQUIRES esp_lcd esp_timer
+  REQUIRES esp_lcd esp_timer esp_driver_sdmmc fatfs
 )
