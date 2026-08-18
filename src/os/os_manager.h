@@ -4,9 +4,10 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 
-extern QueueHandle_t os_event_queue;
+extern QueueHandle_t g_event_queue;
 extern SemaphoreHandle_t os_mutex;
 
 esp_err_t OS_Manager_Init(void);
+// FILE *OS_Manager_Request_File(const char *path);
 
 #endif // __OS_MANAGER_H_

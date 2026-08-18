@@ -1,5 +1,5 @@
-#ifndef __LED_H_
-#define __LED_H_
+#ifndef __DRIVER_LED_H_
+#define __DRIVER_LED_H_
 
 #include "esp_err.h"
 #include "global.h"
@@ -24,8 +24,8 @@ typedef enum {
   LED_STRIP_BODYLIGHT,
 } LED_Strip_ID;
 
-esp_err_t LED_Init(void);
-void LED_SetHeadlights(G_Color_ID color_id);
-void LED_SetBodylights(G_Color_ID color_id);
+esp_err_t LEDDriver_Init(void);
+void LEDDriver_SetHeadlights(G_Color_ID color_id);
+void LEDDriver_SetBodylights(G_Color_ID color_id);
 
-#endif // __LED_H_
+#endif // __DRIVER_LED_H_

@@ -1,5 +1,5 @@
-#ifndef __DISPLAY_H_
-#define __DISPLAY_H_
+#ifndef __DRIVER_DISPLAY_H_
+#define __DRIVER_DISPLAY_H_
 
 #include "esp_err.h"
 
@@ -15,6 +15,6 @@
 #define DISPLAY_LCD_T_IRQ_PIN (16)
 #define DISPLAY_LCD_T_CS_PIN (17)
 
-esp_err_t Display_Init();
+esp_err_t DisplayDriver_Init();
 
-#endif // __DISPLAY_H_
+#endif // __DRIVER_DISPLAY_H_

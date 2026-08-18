@@ -1,13 +1,11 @@
-#include "screen_light_select.h"
+#include "screen_light.h"
 #include "color_picker.h"
 #include "esp_log.h"
-#include "global.h"
-#include "os_event.h"
 #include "ui_definitions.h"
 #include <stdint.h>
 #include <string.h>
 
-static os_event_ui_intercept_cb ui_controller_intercept_cb = NULL;
+static g_event_ui_intercept_cb ui_controller_intercept_cb = NULL;
 static lv_subject_t btn_is_selected;
 static UI_Element_ID selected_btn = UI_ELEMENT_NONE;
 
@@ -37,20 +35,20 @@ static void color_picker_injection_cb(lv_event_t *lv_event) {
 
   G_Color_ID color_id = get_mapped_color_id(text);
 
-  OS_Event_t os_event = OS_Event_Create(OS_CONTROLLER_UI, OS_CONTROLLER_LIGHT,
-                                        OS_EVENT_LIGHT_SELECT, color_id);
+  G_Event_t g_event = G_Event_Create(G_CONTROLLER_UI, G_CONTROLLER_LIGHT,
+                                     G_EVENT_LIGHT_SELECT, color_id);
 
   selected_btn = UI_ELEMENT_NONE;
   lv_subject_set_int(&btn_is_selected, 0);
 
-  ui_controller_intercept_cb(&os_event);
-  ESP_LOGI("SCREEN_LIGHT_SELECT", "sending os_event with color_id: %s", text);
+  ui_controller_intercept_cb(&g_event);
+  ESP_LOGI("SCREEN_LIGHT_SELECT", "sending g_event with color_id: %s", text);
 }
 
 // use current value from light to fill back selected
 
 void Light_Select_Screen_Render(lv_obj_t *screen,
-                                os_event_ui_intercept_cb ui_injection_cb) {
+                                g_event_ui_intercept_cb ui_injection_cb) {
   assert(ui_injection_cb != NULL);
 
   ui_controller_intercept_cb = ui_injection_cb;

@@ -1,4 +1,4 @@
-#include "display.h"
+#include "driver_display.h"
 #include "driver/spi_master.h"
 #include "esp_lcd_ili9341.h"
 #include "esp_lcd_panel_io.h"
@@ -22,7 +22,7 @@ void init_lvgl(void);
 
 /* INTERFACE */
 
-esp_err_t Display_Init() {
+esp_err_t DisplayDriver_Init() {
   spi_bus_config_t spi_bus_lcd = {
       .sclk_io_num = SPI_CLK_PIN_LCD,
       .mosi_io_num = SPI_MOSI_PIN_LCD,

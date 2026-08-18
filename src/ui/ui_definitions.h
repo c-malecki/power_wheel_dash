@@ -3,7 +3,6 @@
 
 #include "global.h"
 #include "lvgl.h"
-#include "os_event.h"
 #include <stddef.h>
 #include <stdint.h>
 
@@ -35,31 +34,40 @@ typedef enum {
 
 typedef enum {
   UI_ELEMENT_STYLE_NONE = 0,
+  // global buttons
   UI_ELEMENT_UI_STYLE_SYS_BUTTON,
   UI_ELEMENT_UI_STYLE_SYS_BUTTON_ICON,
+  // navigation buttons/icons
   UI_ELEMENT_UI_STYLE_NAV_BUTTON,
   UI_ELEMENT_UI_STYLE_NAV_BUTTON_ICON,
 } UI_Element_Style_ID;
 
 typedef enum {
   UI_ELEMENT_NONE = 0,
+  // global back to home button
   UI_ELEMENT_SYS_HOME_BTN,
-  UI_ELEMENT_HOME_SCREEN_LIGHTS,
-  UI_ELEMENT_HOME_SCREEN_SOUND,
-  UI_ELEMENT_HOME_SCREEN_SETTINGS,
+  // home
+  UI_ELEMENT_HOME_LIGHT_NAV,
+  UI_ELEMENT_HOME_SOUND_NAV,
+  UI_ELEMENT_HOME_SETTINGS_NAV,
+  // lights
   UI_ELEMENT_LIGHT_SCREEN_HEADLIGHTS_BTN,
   UI_ELEMENT_LIGHT_SCREEN_BODYLIGHTS_BTN,
   UI_ELEMENT_LIGHT_SCREEN_COLOR_PICKER,
+  // sounds
+  UI_ELEMENT_SOUND_SCREEN_SOUND_PICKER,
+  UI_ELEMENT_SOUND_SCREEN_IGNITION_BTN,
 } UI_Element_ID;
 
 typedef enum {
   UI_SCREEN_NONE = 0,
   UI_SCREEN_HOME,
-  UI_SCREEN_LIGHT_SELECT,
+  UI_SCREEN_LIGHT,
+  UI_SCREEN_SOUND,
 } UI_Screen_ID;
 
 typedef void (*screen_render_fn)(lv_obj_t *screen,
-                                 os_event_ui_intercept_cb ui_injection_cb);
+                                 g_event_ui_intercept_cb ui_injection_cb);
 
 typedef struct {
   UI_Screen_ID screen_id;

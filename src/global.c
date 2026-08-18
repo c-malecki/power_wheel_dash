@@ -1,5 +1,22 @@
 #include "global.h"
 
+QueueHandle_t g_event_queue = NULL;
+
+void G_Event_Queue_Init(void) {
+  g_event_queue = xQueueCreate(10, sizeof(G_Event_t));
+}
+
+G_Event_t G_Event_Create(G_Controller_ID tx_controller_id,
+                         G_Controller_ID rx_controller_id, G_Event_ID event_id,
+                         uint32_t payload) {
+  return (G_Event_t){
+      .tx_controller_id = tx_controller_id,
+      .rx_controller_id = rx_controller_id,
+      .event_id = event_id,
+      .payload = payload,
+  };
+}
+
 const G_Color_t g_color_none = {0, 0, 0};
 const G_Color_t g_color_white = {255, 255, 255}; // 127, 127, 127
 const G_Color_t g_color_red = {255, 0, 0};       // 127, 0, 0
@@ -30,5 +47,19 @@ G_Color_t Global_Color_Lookup(G_Color_ID color_id) {
     return g_color_gray;
   default:
     return g_color_none;
+  }
+}
+
+// driver_storage.h
+// #define MOUNT_POINT "/sdcard"
+const G_Sfx_t g_sfx_none = {"/sfx"};
+const G_Sfx_t g_sfx_car_start = {"/sfx/car_start.wav"};
+
+G_Sfx_t Global_Sfx_Lookup(G_Sfx_ID sfx_id) {
+  switch (sfx_id) {
+  case G_SFX_CAR_START:
+    return g_sfx_car_start;
+  default:
+    return g_sfx_none;
   }
 }

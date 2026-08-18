@@ -1,6 +1,5 @@
-#include "ui_controller.h"
+#include "controller_ui.h"
 #include "esp_log.h"
-#include "os_event.h"
 #include "ui_definitions.h"
 #include "ui_tables.h"
 #include <stdbool.h>
@@ -16,19 +15,19 @@ static void sys_home_touch_cb(lv_event_t *lv_event);
 static const UI_Screen_Entry_t *
 find_screen_by_screen_id(UI_Screen_ID screen_id);
 
-static void ui_controller_intercept(OS_Event_t *os_event) {
-  ESP_LOGI("UI_CONTROLLER", "ui_controller_intercept os_event");
+static void ui_controller_intercept(G_Event_t *g_event) {
+  ESP_LOGI("UI_CONTROLLER", "ui_controller_intercept g_event");
 
   // handle local/ui changes and then pass up to OS manager
-  if (os_event->event_id == OS_EVENT_NAVIGATE) {
-    UI_Screen_ID new_screen_id = os_event->payload;
+  if (g_event->event_id == G_EVENT_NAVIGATE) {
+    UI_Screen_ID new_screen_id = g_event->payload;
     render(new_screen_id);
     return;
   }
 
-  if (xQueueSend(os_event_queue, os_event, pdMS_TO_TICKS(50)) != pdTRUE) {
+  if (xQueueSend(g_event_queue, g_event, pdMS_TO_TICKS(50)) != pdTRUE) {
     ESP_LOGW("UI_CONTROLLER", "event queue full, dropped event id=%d",
-             os_event->event_id);
+             g_event->event_id);
   }
 }
 
@@ -96,3 +95,5 @@ static void sys_home_touch_cb(lv_event_t *lv_event) {
 
   render(UI_SCREEN_HOME);
 }
+
+void UI_Controller_RX(G_Event_t *g_event) {}

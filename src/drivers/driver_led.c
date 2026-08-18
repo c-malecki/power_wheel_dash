@@ -1,4 +1,4 @@
-#include "led.h"
+#include "driver_led.h"
 #include "global.h"
 #include "led_strip.h"
 #include "led_strip_types.h"
@@ -117,7 +117,7 @@ void strip_set_color(LED_Strip_ID strip_id, G_Color_ID color_id) {
   }
 }
 
-esp_err_t LED_Init(void) {
+esp_err_t LEDDriver_Init(void) {
   return led_strip_new_rmt_device(&hll_config, &rmt_config, &strip_hll_handle);
 }
 
@@ -137,11 +137,11 @@ esp_err_t LED_Init(void) {
 //                                   &strip_body_handle);
 // }
 
-void LED_SetHeadlights(G_Color_ID color_id) {
+void LEDDriver_SetHeadlights(G_Color_ID color_id) {
   strip_set_color(LED_STRIP_HEADLIGHT, color_id);
 }
 
-void LED_SetBodylights(G_Color_ID color_id) {
+void LEDDriver_SetBodylights(G_Color_ID color_id) {
   strip_set_color(LED_STRIP_BODYLIGHT, color_id);
 }
 
