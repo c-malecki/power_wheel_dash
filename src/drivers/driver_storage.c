@@ -2,22 +2,13 @@
 #include "driver_storage.h"
 #include "esp_log.h"
 #include "esp_vfs_fat.h"
+#include "global.h"
 #include "sdmmc_cmd.h"
 #include <sys/stat.h>
 #include <sys/unistd.h>
 
 /*
 https://docs.espressif.com/projects/esp-idf/en/release-v6.1/esp32s3/api-reference/peripherals/sdmmc_host.html
-
-Of all the functions listed below, only the following ones will be used
-directly by most applications:
-
-sdmmc_host_init()
-
-sdmmc_host_init_slot()
-
-sdmmc_host_deinit()
-
 */
 
 sdmmc_card_t *sd_card = NULL;
@@ -35,7 +26,6 @@ esp_err_t StorageDriver_Init(void) {
   if (err != ESP_OK) {
     return err;
   }
-  ESP_LOGI("STORAGE DRIVER", "msd spi bus initialized");
 
   esp_vfs_fat_sdmmc_mount_config_t mount_config = {
       .format_if_mount_failed = false,
@@ -44,7 +34,7 @@ esp_err_t StorageDriver_Init(void) {
   };
 
   sdmmc_card_t *card;
-  const char mount_point[] = MOUNT_POINT;
+  const char mount_point[] = MSD_MOUNT_POINT;
 
   sdmmc_host_t host = SDSPI_HOST_DEFAULT();
   host.slot = SPI3_HOST;
@@ -62,7 +52,7 @@ esp_err_t StorageDriver_Init(void) {
     ESP_LOGE("STORAGE DRIVER", "esp_vfs_fat_sdspi_mount error: 0x%x", err);
     return err;
   }
-  ESP_LOGI("STORAGE DRIVER", "microsd card initialized via SPI");
+  // ESP_LOGI("STORAGE DRIVER", "microsd card initialized via SPI");
 
   sd_card = card;
   sdmmc_card_print_info(stdout, sd_card);
@@ -70,14 +60,10 @@ esp_err_t StorageDriver_Init(void) {
   return ESP_OK;
 }
 
-/*
-
- sdmmc_slot_config_t slot_config = SDMMC_SLOT_CONFIG_DEFAULT();
-  slot_config.clk = SPI_CLK_PIN_MSD;
-  slot_config.cmd = SPI_MOSI_PIN_MSD;
-  slot_config.d0 = SPI_MISO_PIN_MSD;
-  // HW-125 MicroSD module doesn't include CD or WP
-  slot_config.gpio_cd = GPIO_NUM_NC;
-  slot_config.gpio_wp = GPIO_NUM_NC;
-
-*/
+FILE *Storage_Driver_FileRead(const char *path) {
+  FILE *f = fopen(path, "rb");
+  if (f == NULL) {
+    ESP_LOGE("STORAGE DRIVER", "failed to open %s", path);
+  }
+  return f;
+}

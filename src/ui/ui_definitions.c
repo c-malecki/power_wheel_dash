@@ -30,7 +30,6 @@ LV_STYLE_CONST_PAD_TOP (BOTTOM, LEFT, RIGHT)
 const lv_style_const_prop_t ui_style_layout_grid_props[] = {
     LV_STYLE_CONST_WIDTH(320),
     LV_STYLE_CONST_HEIGHT(240),
-    LV_STYLE_CONST_BG_OPA(0),
     LV_STYLE_CONST_BORDER_WIDTH(0),
     LV_STYLE_CONST_LAYOUT(LV_LAYOUT_GRID),
 };

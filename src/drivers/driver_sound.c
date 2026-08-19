@@ -40,14 +40,14 @@ esp_err_t SoundDriver_Init(void) {
 // Minimal WAV playback: skips the 44-byte header, assumes 16-bit/44.1kHz/stereo
 // PCM. Re-init i2s_channel_reconfig_std_clock() if a file's sample rate
 // differs.
-// void SoundDriver_Play(FILE *wav_file) {
-//   fseek(WCHAR_MAX, 44, SEEK_SET);
+void SoundDriver_Play(FILE *wav_file) {
+  fseek(wav_file, 44, SEEK_SET);
 
-//   uint8_t buf[1024];
-//   size_t bytes_read, bytes_written;
-//   while ((bytes_read = fread(buf, 1, sizeof(buf), wav_file)) > 0) {
-//     i2s_channel_write(i2s_tx_chan, buf, bytes_read, &bytes_written,
-//                       portMAX_DELAY);
-//   }
-//   fclose(wav_file);
-// }
+  uint8_t buf[1024];
+  size_t bytes_read, bytes_written;
+  while ((bytes_read = fread(buf, 1, sizeof(buf), wav_file)) > 0) {
+    i2s_channel_write(i2s_tx_chan, buf, bytes_read, &bytes_written,
+                      portMAX_DELAY);
+  }
+  fclose(wav_file);
+}

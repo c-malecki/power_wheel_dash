@@ -1,6 +1,7 @@
 #include "os_manager.h"
 #include "controller_light.h"
 #include "controller_sound.h"
+#include "controller_storage.h"
 #include "controller_ui.h"
 #include "esp_err.h"
 #include "esp_log.h"
@@ -27,16 +28,21 @@ esp_err_t OS_Manager_Init(void) {
   xSemaphoreGive(os_mutex);
   ESP_LOGI("OS_MANANGER", "UI_Controller initialized");
 
+  // xSemaphoreTake(os_mutex, portMAX_DELAY);
+  // Storage_Controller_Init();
+  // xSemaphoreGive(os_mutex);
+  // ESP_LOGI("OS_MANANGER", "Storage_Controller initialized");
+
+  // Sound_Controller_Init();
+  // ESP_LOGI("OS_MANANGER", "Sound_Controller initialized");
+
   Light_Controller_Init();
   ESP_LOGI("OS_MANANGER", "Light_Controller initialized");
 
-  Sound_Controller_Init();
-  ESP_LOGI("OS_MANANGER", "Sound_Controller initialized");
-
-  xTaskCreatePinnedToCore(os_manager_task, "os_manager_task", 4096, NULL, 5,
+  xTaskCreatePinnedToCore(os_manager_task, "os_manager_task", 8192, NULL, 10,
                           NULL, 0);
 
-  xTaskCreatePinnedToCore(display_task, "display task", 16384, NULL, 10, NULL,
+  xTaskCreatePinnedToCore(display_task, "display_task", 16384, NULL, 5, NULL,
                           1);
 
   return ESP_OK;
@@ -52,13 +58,12 @@ static void os_manager_task(void *arg) {
   G_Event_t g_event;
   while (1) {
     if (xQueueReceive(g_event_queue, &g_event, portMAX_DELAY)) {
-      ESP_LOGI("OS_MANAGER", "os_manager_task queue receive event");
 
       switch (g_event.rx_controller_id) {
       case G_CONTROLLER_UI:
-        // xSemaphoreTake(os_mutex, portMAX_DELAY);
-        // UI_Controller_RX(&g_event);
-        // xSemaphoreGive(os_mutex);
+        xSemaphoreTake(os_mutex, portMAX_DELAY);
+        UI_Controller_RX(&g_event);
+        xSemaphoreGive(os_mutex);
         break;
 
       case G_CONTROLLER_LIGHT:
@@ -70,6 +75,12 @@ static void os_manager_task(void *arg) {
       case G_CONTROLLER_SOUND:
         xSemaphoreTake(os_mutex, portMAX_DELAY);
         Sound_Controller_RX(&g_event);
+        xSemaphoreGive(os_mutex);
+        break;
+
+      case G_CONTROLLER_STORAGE:
+        xSemaphoreTake(os_mutex, portMAX_DELAY);
+        Storage_Controller_RX(&g_event);
         xSemaphoreGive(os_mutex);
         break;
 

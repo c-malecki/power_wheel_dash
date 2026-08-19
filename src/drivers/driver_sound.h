@@ -3,6 +3,7 @@
 
 #include "esp_err.h"
 #include "global.h"
+#include <stdio.h>
 
 #define SOUND_AMP_LRC_PIN (15)
 #define SOUND_AMP_BCLK_PIN (7)
@@ -16,6 +17,6 @@
 #define SOUND_VOL_5 ? // 15db
 
 esp_err_t SoundDriver_Init(void);
-// void SoundDriver_Play(FILE *wav_file);
+void SoundDriver_Play(FILE *wav_file);
 
 #endif // __DRIVER_SOUND_H_

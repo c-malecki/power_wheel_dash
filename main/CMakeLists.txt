@@ -9,6 +9,7 @@ idf_component_register(
     "../src/os/os_manager.c"
     "../src/os/controller/controller_light.c"
     "../src/os/controller/controller_sound.c"
+    "../src/os/controller/controller_storage.c"
     "../src/os/controller/controller_ui.c"
     "../src/ui/ui_definitions.c"
     "../src/ui/ui_tables.c"

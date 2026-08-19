@@ -7,6 +7,8 @@
 
 /* system */
 
+#define MSD_MOUNT_POINT "/sdcard"
+
 extern QueueHandle_t g_event_queue;
 
 typedef enum {
@@ -14,6 +16,7 @@ typedef enum {
   G_CONTROLLER_UI,
   G_CONTROLLER_LIGHT,
   G_CONTROLLER_SOUND,
+  G_CONTROLLER_STORAGE,
 } G_Controller_ID;
 
 typedef enum {
@@ -22,13 +25,25 @@ typedef enum {
   G_EVENT_LIGHT_SELECT,
   G_EVENT_SFX_SELECT,
   G_EVENT_SFX_PLAY,
+  G_EVENT_FS_FILE_REQ,
 } G_Event_ID;
+
+typedef enum {
+  G_FS_FILE_NONE = 0,
+  G_FS_FILE_CAR_START,
+} G_FS_File_ID;
+
+typedef struct {
+  G_FS_File_ID file_id;
+  const char *path;
+} G_FS_File_t;
 
 typedef struct {
   G_Controller_ID tx_controller_id;
   G_Controller_ID rx_controller_id;
   G_Event_ID event_id;
   uint32_t payload;
+  void *payload_data;
 } G_Event_t;
 
 typedef void (*g_event_ui_intercept_cb)(G_Event_t *g_event);
@@ -38,6 +53,8 @@ void G_Event_Queue_Init(void);
 G_Event_t G_Event_Create(G_Controller_ID tx_controller_id,
                          G_Controller_ID rx_controller_id, G_Event_ID event_id,
                          uint32_t payload);
+
+const char *Global_Filepath_Lookup(G_FS_File_ID file_id);
 
 /* styles */
 
@@ -79,9 +96,15 @@ typedef enum {
 } G_Sfx_ID;
 
 typedef struct {
-  const char *path;
+  G_Sfx_ID sfx_id;
+  G_FS_File_ID file_id;
 } G_Sfx_t;
 
-G_Sfx_t Global_Sfx_Lookup(G_Sfx_ID sfx_id);
+G_FS_File_ID Global_Sfx_File_ID_Lookup(G_Sfx_ID sfx_id);
+
+/* tables */
+
+// extern const G_Sfx_t g_sfx_table[];
+// extern const size_t g_sfx_table_size;
 
 #endif // __UI_TYPES_H_

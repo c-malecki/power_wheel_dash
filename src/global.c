@@ -50,16 +50,47 @@ G_Color_t Global_Color_Lookup(G_Color_ID color_id) {
   }
 }
 
-// driver_storage.h
-// #define MOUNT_POINT "/sdcard"
-const G_Sfx_t g_sfx_none = {"/sfx"};
-const G_Sfx_t g_sfx_car_start = {"/sfx/car_start.wav"};
+const G_FS_File_t g_fs_file_none = {.file_id = G_FS_FILE_NONE, .path = "/sfx"};
 
-G_Sfx_t Global_Sfx_Lookup(G_Sfx_ID sfx_id) {
-  switch (sfx_id) {
+const G_FS_File_t g_fs_file_car_start = {.file_id = G_FS_FILE_CAR_START,
+                                         .path = "/sfx/car_start.wav"};
+
+const char *Global_Filepath_Lookup(G_FS_File_ID file_id) {
+  switch (file_id) {
   case G_SFX_CAR_START:
-    return g_sfx_car_start;
+    return g_fs_file_car_start.path;
   default:
-    return g_sfx_none;
+    return g_fs_file_none.path;
   }
 }
+
+const G_Sfx_t g_sfx_none = {
+    .sfx_id = G_SFX_NONE,
+    .file_id = G_FS_FILE_NONE,
+};
+
+const G_Sfx_t g_sfx_car_start = {
+    .sfx_id = G_SFX_CAR_START,
+    .file_id = G_FS_FILE_CAR_START,
+};
+
+G_FS_File_ID Global_Sfx_File_ID_Lookup(G_Sfx_ID sfx_id) {
+  switch (sfx_id) {
+  case G_SFX_CAR_START: {
+    return g_sfx_car_start.file_id;
+  }
+
+  default:
+    return g_sfx_none.file_id;
+  }
+}
+
+// const G_Sfx_t g_sfx_table[] = {
+//     // car power on sound
+//     {
+//         .sfx_id = G_SFX_CAR_START,
+//         .file_id = G_FS_FILE_CAR_START,
+//     },
+// };
+// const size_t g_sfx_table_size =
+//     sizeof(g_sfx_table) / sizeof(g_sfx_table[0]);

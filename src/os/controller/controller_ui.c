@@ -16,9 +16,6 @@ static const UI_Screen_Entry_t *
 find_screen_by_screen_id(UI_Screen_ID screen_id);
 
 static void ui_controller_intercept(G_Event_t *g_event) {
-  ESP_LOGI("UI_CONTROLLER", "ui_controller_intercept g_event");
-
-  // handle local/ui changes and then pass up to OS manager
   if (g_event->event_id == G_EVENT_NAVIGATE) {
     UI_Screen_ID new_screen_id = g_event->payload;
     render(new_screen_id);
@@ -96,4 +93,6 @@ static void sys_home_touch_cb(lv_event_t *lv_event) {
   render(UI_SCREEN_HOME);
 }
 
-void UI_Controller_RX(G_Event_t *g_event) {}
+void UI_Controller_RX(G_Event_t *g_event) {
+  // ESP_LOGI("UI_CONTROLLER", "event received");
+}
