@@ -9,8 +9,6 @@
 #include "lvgl.h"
 #include "os_kernel.h"
 
-SemaphoreHandle_t os_mutex = NULL;
-
 static void os_manager_task(void *arg);
 static void display_task(void *arg);
 
@@ -21,16 +19,14 @@ esp_err_t OS_Manager_Init(void) {
   }
 
   G_Event_Queue_Init();
-  os_mutex = xSemaphoreCreateMutex();
+  lvgl_mutex = xSemaphoreCreateMutex();
 
-  xSemaphoreTake(os_mutex, portMAX_DELAY);
   UI_Controller_Init();
-  xSemaphoreGive(os_mutex);
   ESP_LOGI("OS_MANANGER", "UI_Controller initialized");
 
-  // xSemaphoreTake(os_mutex, portMAX_DELAY);
+  // xSemaphoreTake(lvgl_mutex, portMAX_DELAY);
   // Storage_Controller_Init();
-  // xSemaphoreGive(os_mutex);
+  // xSemaphoreGive(lvgl_mutex);
   // ESP_LOGI("OS_MANANGER", "Storage_Controller initialized");
 
   // Sound_Controller_Init();
@@ -61,27 +57,19 @@ static void os_manager_task(void *arg) {
 
       switch (g_event.rx_controller_id) {
       case G_CONTROLLER_UI:
-        xSemaphoreTake(os_mutex, portMAX_DELAY);
         UI_Controller_RX(&g_event);
-        xSemaphoreGive(os_mutex);
         break;
 
       case G_CONTROLLER_LIGHT:
-        xSemaphoreTake(os_mutex, portMAX_DELAY);
         Light_Controller_RX(&g_event);
-        xSemaphoreGive(os_mutex);
         break;
 
       case G_CONTROLLER_SOUND:
-        xSemaphoreTake(os_mutex, portMAX_DELAY);
         Sound_Controller_RX(&g_event);
-        xSemaphoreGive(os_mutex);
         break;
 
       case G_CONTROLLER_STORAGE:
-        xSemaphoreTake(os_mutex, portMAX_DELAY);
         Storage_Controller_RX(&g_event);
-        xSemaphoreGive(os_mutex);
         break;
 
       case G_CONTROLLER_NONE:
@@ -97,9 +85,9 @@ static void display_task(void *arg) {
   TickType_t last_wake = xTaskGetTickCount();
 
   while (1) {
-    xSemaphoreTake(os_mutex, portMAX_DELAY);
+    xSemaphoreTake(lvgl_mutex, portMAX_DELAY);
     lv_timer_handler();
-    xSemaphoreGive(os_mutex);
+    xSemaphoreGive(lvgl_mutex);
 
     vTaskDelayUntil(&last_wake, period);
   }

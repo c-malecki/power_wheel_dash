@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <string.h>
 
-static g_event_ui_intercept_cb ui_controller_intercept_cb = NULL;
+static g_event_ui_intercept_cb ref_ui_controller_intercept_cb = NULL;
 static lv_subject_t btn_is_selected;
 static UI_Element_ID selected_btn = UI_ELEMENT_NONE;
 
@@ -27,7 +27,7 @@ static G_Color_ID get_mapped_color_id(const char *map_entry);
 // callback given to the color picker so that it doesn't hold state
 // on a file level
 static void color_picker_injection_cb(lv_event_t *lv_event) {
-  assert(ui_controller_intercept_cb != NULL);
+  assert(ref_ui_controller_intercept_cb != NULL);
 
   lv_obj_t *bm = lv_event_get_target_obj(lv_event);
   uint32_t id = lv_buttonmatrix_get_selected_button(bm);
@@ -41,7 +41,7 @@ static void color_picker_injection_cb(lv_event_t *lv_event) {
   selected_btn = UI_ELEMENT_NONE;
   lv_subject_set_int(&btn_is_selected, 0);
 
-  ui_controller_intercept_cb(&g_event);
+  ref_ui_controller_intercept_cb(&g_event);
   ESP_LOGI("SCREEN_LIGHT_SELECT", "sending g_event with color_id: %s", text);
 }
 
@@ -51,7 +51,7 @@ void Light_Select_Screen_Render(lv_obj_t *screen,
                                 g_event_ui_intercept_cb ui_injection_cb) {
   assert(ui_injection_cb != NULL);
 
-  ui_controller_intercept_cb = ui_injection_cb;
+  ref_ui_controller_intercept_cb = ui_injection_cb;
 
   lv_obj_t *layout = UI_Create_Grid_2x1(screen);
 

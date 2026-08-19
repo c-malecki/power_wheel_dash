@@ -5,17 +5,16 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-static lv_obj_t *current_screen_obj = NULL;
-static UI_Screen_ID current_screen_id = UI_SCREEN_HOME;
-static lv_subject_t current_screen_is_home;
+static UI_Controller_t ctrl;
 
 static void render(UI_Screen_ID screen_id);
 static void sys_home_touch_cb(lv_event_t *lv_event);
-
 static const UI_Screen_Entry_t *
 find_screen_by_screen_id(UI_Screen_ID screen_id);
 
-static void ui_controller_intercept(G_Event_t *g_event) {
+/* Main Logic */
+
+static void UI_Controller_Intercept_CB(G_Event_t *g_event) {
   if (g_event->event_id == G_EVENT_NAVIGATE) {
     UI_Screen_ID new_screen_id = g_event->payload;
     render(new_screen_id);
@@ -31,6 +30,9 @@ static void ui_controller_intercept(G_Event_t *g_event) {
 void UI_Controller_Init(void) {
   assert(ui_screen_table != NULL);
 
+  ctrl.ui_mutex = xSemaphoreCreateMutex();
+  assert(ctrl.ui_mutex != NULL);
+
   lv_obj_t *home_button = lv_button_create(lv_layer_top());
   lv_obj_add_style(home_button, &ui_style_sys_button, 0);
   UI_Set_Element_BG_Color(home_button, G_COLOR_GRAY);
@@ -41,12 +43,18 @@ void UI_Controller_Init(void) {
   lv_obj_add_style(label, &ui_style_sys_button_icon, 0);
   lv_label_set_text(label, LV_SYMBOL_HOME);
 
-  lv_subject_init_int(&current_screen_is_home, 1);
-  lv_obj_bind_flag_if_eq(home_button, &current_screen_is_home,
+  lv_subject_init_int(&ctrl.current_screen_is_home, 1);
+  lv_obj_bind_flag_if_eq(home_button, &ctrl.current_screen_is_home,
                          LV_OBJ_FLAG_HIDDEN, 1);
 
   render(UI_SCREEN_HOME);
 }
+
+void UI_Controller_RX(G_Event_t *g_event) {
+  // ESP_LOGI("UI_CONTROLLER", "event received");
+}
+
+/* */
 
 static const UI_Screen_Entry_t *
 find_screen_by_screen_id(UI_Screen_ID screen_id) {
@@ -63,25 +71,29 @@ find_screen_by_screen_id(UI_Screen_ID screen_id) {
 }
 
 static void render(UI_Screen_ID new_screen_id) {
+  xSemaphoreTake(ctrl.ui_mutex, portMAX_DELAY);
+
   const UI_Screen_Entry_t *new_screen = find_screen_by_screen_id(new_screen_id);
   assert(new_screen != NULL);
 
-  if (current_screen_obj != NULL) {
-    lv_obj_del(current_screen_obj);
-    current_screen_obj = NULL;
+  if (ctrl.current_screen_obj != NULL) {
+    lv_obj_del(ctrl.current_screen_obj);
+    ctrl.current_screen_obj = NULL;
   }
 
-  current_screen_obj = lv_obj_create(NULL);
-  new_screen->render_fn(current_screen_obj, ui_controller_intercept);
+  ctrl.current_screen_obj = lv_obj_create(NULL);
+  new_screen->render_fn(ctrl.current_screen_obj, UI_Controller_Intercept_CB);
 
   if (new_screen_id == UI_SCREEN_HOME) {
-    lv_subject_set_int(&current_screen_is_home, 1);
+    lv_subject_set_int(&ctrl.current_screen_is_home, 1);
   } else {
-    lv_subject_set_int(&current_screen_is_home, 0);
+    lv_subject_set_int(&ctrl.current_screen_is_home, 0);
   }
 
-  lv_screen_load(current_screen_obj);
-  current_screen_id = new_screen_id;
+  lv_screen_load(ctrl.current_screen_obj);
+  ctrl.current_screen_id = new_screen_id;
+
+  xSemaphoreGive(ctrl.ui_mutex);
 }
 
 static void sys_home_touch_cb(lv_event_t *lv_event) {
@@ -91,8 +103,4 @@ static void sys_home_touch_cb(lv_event_t *lv_event) {
   }
 
   render(UI_SCREEN_HOME);
-}
-
-void UI_Controller_RX(G_Event_t *g_event) {
-  // ESP_LOGI("UI_CONTROLLER", "event received");
 }

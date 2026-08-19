@@ -5,7 +5,7 @@
 #include "freertos/semphr.h"
 
 extern QueueHandle_t g_event_queue;
-extern SemaphoreHandle_t os_mutex;
+extern SemaphoreHandle_t lvgl_mutex;
 
 esp_err_t OS_Manager_Init(void);
 

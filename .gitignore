@@ -30,9 +30,8 @@ build/
 *.bin
 *.elf
 *.map
-flasher_args.json # Generated in build directory
+flasher_args.json
 sdkconfig.old
-sdkconfig
 
 # ESP-IDF dependencies
 # For older versions or manual component management
@@ -82,4 +81,4 @@ Desktop.ini
 hardware/kicad-10.0_power_wheel_dash/kicad-10.0_power_wheel_dash-backups
 hardware/kicad-10.0_power_wheel_dash/~kicad-10.0_power_wheel_dash.kicad_sch.lck
 hardware/kicad-10.0_power_wheel_dash/~kicad-10.0_power_wheel_dash.kicad_pro.lck
-z
+llm

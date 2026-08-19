@@ -5,10 +5,10 @@
 #include <assert.h>
 #include <stdint.h>
 
-static g_event_ui_intercept_cb ui_controller_intercept_cb = NULL;
+static g_event_ui_intercept_cb ref_ui_controller_intercept_cb = NULL;
 
 static void sfx_btn_event_cb(lv_event_t *lv_event) {
-  assert(ui_controller_intercept_cb != NULL);
+  assert(ref_ui_controller_intercept_cb != NULL);
 
   lv_event_code_t code = lv_event_get_code(lv_event);
   if (code != LV_EVENT_CLICKED) {
@@ -22,7 +22,7 @@ static void sfx_btn_event_cb(lv_event_t *lv_event) {
   G_Event_t g_event = G_Event_Create(G_CONTROLLER_UI, G_CONTROLLER_SOUND,
                                      G_EVENT_SFX_SELECT, G_SFX_CAR_START);
 
-  ui_controller_intercept_cb(&g_event);
+  ref_ui_controller_intercept_cb(&g_event);
   ESP_LOGI("SCREEN_SOUND_SELECT", "sending g_event with sfx_id: %s",
            "CAR START");
 }
@@ -31,7 +31,7 @@ void Sound_Screen_Render(lv_obj_t *screen,
                          g_event_ui_intercept_cb ui_injection_cb) {
   assert(ui_injection_cb != NULL);
 
-  ui_controller_intercept_cb = ui_injection_cb;
+  ref_ui_controller_intercept_cb = ui_injection_cb;
 
   lv_obj_t *layout = UI_Create_Grid_3x2(screen);
 

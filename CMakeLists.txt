@@ -3,4 +3,9 @@
 cmake_minimum_required(VERSION 3.22)
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
+
+if(DEVELOPMENT)
+    add_compile_definitions(DEVELOPMENT=1)
+endif()
+
 project(power_wheel_dash)

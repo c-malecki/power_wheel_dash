@@ -1,4 +1,5 @@
 #include "driver_sound.h"
+#include "driver/i2s_common.h"
 #include "driver/i2s_std.h"
 #include "esp_err.h"
 #include "esp_log.h"
@@ -24,10 +25,10 @@ esp_err_t SoundDriver_Init(void) {
       .gpio_cfg =
           {
               .mclk = I2S_GPIO_UNUSED,
-              .bclk = SOUND_AMP_BCLK_PIN,
-              .ws = SOUND_AMP_LRC_PIN,
-              .dout = SOUND_AMP_DIN_PIN,
-              .din = I2S_GPIO_UNUSED,
+              .bclk = AUDIO_AMP_PIN_BCLK,
+              .ws = AUDIO_AMP_PIN_LRC,
+              .dout = I2S_GPIO_UNUSED,
+              .din = AUDIO_AMP_PIN_DIN,
           },
   };
   ret = i2s_channel_init_std_mode(i2s_tx_chan, &std_cfg);

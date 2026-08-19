@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <stdint.h>
 
-static g_event_ui_intercept_cb ui_controller_intercept_cb = NULL;
+static g_event_ui_intercept_cb ref_ui_controller_intercept_cb = NULL;
 
 static void home_nav_btn_event_cb(lv_event_t *lv_event) {
   lv_event_code_t code = lv_event_get_code(lv_event);
@@ -18,8 +18,8 @@ static void home_nav_btn_event_cb(lv_event_t *lv_event) {
   G_Event_t g_event = G_Event_Create(G_CONTROLLER_UI, G_CONTROLLER_UI,
                                      G_EVENT_NAVIGATE, screen_id);
 
-  if (ui_controller_intercept_cb != NULL) {
-    ui_controller_intercept_cb(&g_event);
+  if (ref_ui_controller_intercept_cb != NULL) {
+    ref_ui_controller_intercept_cb(&g_event);
   }
 }
 
@@ -27,7 +27,7 @@ void Home_Screen_Render(lv_obj_t *screen,
                         g_event_ui_intercept_cb ui_injection_cb) {
   assert(ui_injection_cb != NULL);
 
-  ui_controller_intercept_cb = ui_injection_cb;
+  ref_ui_controller_intercept_cb = ui_injection_cb;
 
   lv_obj_t *layout = UI_Create_Grid_3x2(screen);
 
