@@ -4436,6 +4436,12 @@
 		(uuid "ebb07cf2-514d-447f-a7c1-2a9107d144e9")
 	)
 	(junction
+		(at 198.755 71.755)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "02e378e2-edef-4e26-ace6-2092bf6c2aa8")
+	)
+	(junction
 		(at 27.305 46.355)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -4454,16 +4460,16 @@
 		(uuid "15fabcf5-a658-4d47-98eb-406e7ffd42c7")
 	)
 	(junction
+		(at 236.855 96.52)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "1c0bd95f-f90a-48f4-9dc1-920fd6a6bf6c")
+	)
+	(junction
 		(at 242.57 137.795)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "1e917a7c-1620-4121-ae3a-900732dbc067")
-	)
-	(junction
-		(at 191.135 61.595)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "3d55d05b-2efa-4197-8024-5037fa05fbeb")
 	)
 	(junction
 		(at 95.25 137.795)
@@ -4494,6 +4500,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "5c37a489-8fdb-4b38-ad7f-d834a321dce1")
+	)
+	(junction
+		(at 198.755 81.915)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "776f20c0-83b1-4626-867d-f1bbb4da6850")
 	)
 	(junction
 		(at 134.62 168.91)
@@ -4538,12 +4550,6 @@
 		(uuid "9db8e866-ebcb-4479-baca-e87266cc30ca")
 	)
 	(junction
-		(at 191.135 51.435)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "a1fb2406-3058-45dc-957e-0eb3f25ea460")
-	)
-	(junction
 		(at 90.17 168.91)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -4554,6 +4560,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "e06b2292-5eb9-4b18-835a-354d0ee3a2e5")
+	)
+	(junction
+		(at 198.755 61.595)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "e0bfb4a8-fc6a-4577-bb6b-814f1acf40f4")
 	)
 	(junction
 		(at 90.17 184.15)
@@ -4654,16 +4666,6 @@
 			(type default)
 		)
 		(uuid "0353f9f5-4bcd-484d-92c5-b45579d2d012")
-	)
-	(wire
-		(pts
-			(xy 191.135 43.815) (xy 191.135 51.435)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "03be2882-c273-45b1-9386-cd894729128b")
 	)
 	(wire
 		(pts
@@ -4785,16 +4787,6 @@
 		)
 		(uuid "1001a74b-5a7e-4631-919b-2d1e0a162a0f")
 	)
-	(wire
-		(pts
-			(xy 191.135 71.755) (xy 193.675 71.755)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "11192278-94b6-4fd3-bf5d-a3422d7b39c7")
-	)
 	(polyline
 		(pts
 			(xy 282.575 128.905) (xy 282.575 158.115)
@@ -4804,6 +4796,26 @@
 			(type default)
 		)
 		(uuid "125de790-df90-4309-ace1-b8b3cff98e38")
+	)
+	(wire
+		(pts
+			(xy 198.755 96.52) (xy 236.855 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "142fee5e-8cdb-4df3-8a3a-b7daa958343f")
+	)
+	(wire
+		(pts
+			(xy 198.755 51.435) (xy 198.755 61.595)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1527b988-0f53-4239-970b-19f45eb528e8")
 	)
 	(wire
 		(pts
@@ -4957,13 +4969,13 @@
 	)
 	(wire
 		(pts
-			(xy 191.135 51.435) (xy 193.675 51.435)
+			(xy 198.755 81.915) (xy 198.755 96.52)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "2be9e969-d738-4d7d-af0c-123f2ac9b4ba")
+		(uuid "2fd4cc43-e060-417b-974c-ef65bb7a7772")
 	)
 	(wire
 		(pts
@@ -5217,6 +5229,16 @@
 	)
 	(wire
 		(pts
+			(xy 198.755 71.755) (xy 198.755 81.915)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "65aa7cc4-148b-4af6-a37d-756d7e2dda2a")
+	)
+	(wire
+		(pts
 			(xy 198.755 61.595) (xy 226.695 61.595)
 		)
 		(stroke
@@ -5457,6 +5479,16 @@
 	)
 	(wire
 		(pts
+			(xy 198.755 81.915) (xy 226.695 81.915)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "91123fd0-f811-40f8-b7d2-24cfa56950d0")
+	)
+	(wire
+		(pts
 			(xy 244.475 76.835) (xy 247.015 76.835)
 		)
 		(stroke
@@ -5507,13 +5539,13 @@
 	)
 	(wire
 		(pts
-			(xy 191.135 61.595) (xy 191.135 71.755)
+			(xy 198.755 61.595) (xy 198.755 71.755)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "98969ed7-dab4-45bd-adb7-bb44bdc46577")
+		(uuid "95a6d4e0-0473-44c9-a71c-7b5ce4603b8c")
 	)
 	(wire
 		(pts
@@ -5584,16 +5616,6 @@
 			(type default)
 		)
 		(uuid "aa4b26af-d9ac-4381-83b5-2f021b822635")
-	)
-	(wire
-		(pts
-			(xy 191.135 61.595) (xy 193.675 61.595)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ae9b1dee-5e39-4ce9-995d-77b29e1aaefe")
 	)
 	(wire
 		(pts
@@ -5737,6 +5759,16 @@
 	)
 	(wire
 		(pts
+			(xy 201.295 86.995) (xy 226.695 86.995)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d1b5aa5b-1337-4484-8ce8-75f64dbc9e43")
+	)
+	(wire
+		(pts
 			(xy 60.96 142.875) (xy 78.74 142.875)
 		)
 		(stroke
@@ -5754,16 +5786,6 @@
 			(type default)
 		)
 		(uuid "d4812ed3-8cc2-4256-8ed4-f0705eec85f5")
-	)
-	(wire
-		(pts
-			(xy 191.135 51.435) (xy 191.135 61.595)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d60e4397-5822-4bc7-a241-e22d7ac6d715")
 	)
 	(wire
 		(pts
@@ -6075,6 +6097,16 @@
 		)
 		(uuid "11cc09e9-d7df-4352-b68e-514180b8da83")
 	)
+	(label "LED_BODY_GPIO38"
+		(at 201.295 86.995 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "11f6ef4d-4d3b-4b6c-8acf-56d5434d2a48")
+	)
 	(label "SPI_MISO"
 		(at 92.71 112.395 0)
 		(effects
@@ -6124,16 +6156,6 @@
 			(justify left bottom)
 		)
 		(uuid "25eef9c0-a126-49ba-857f-044a474d9afc")
-	)
-	(label "HEADLIGHT_L_OE_GPIO1"
-		(at 201.93 51.435 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "325692f6-9372-498d-9c18-24949c0d70c9")
 	)
 	(label "BODYLIGHT_DC_GPIO38"
 		(at 255.905 76.835 0)
@@ -6194,16 +6216,6 @@
 			(justify right bottom)
 		)
 		(uuid "4653a390-d0a3-4873-af0a-ae61c39dc7e0")
-	)
-	(label "BODYLIGHT_OE_GPIO39"
-		(at 201.93 71.755 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "52ca4f81-3d38-4cc1-b9cf-6f875408ffdb")
 	)
 	(label "HEADLIGHT_L_DC_GPIO2"
 		(at 231.14 145.415 180)
@@ -6414,16 +6426,6 @@
 			(justify left bottom)
 		)
 		(uuid "c96bcb7c-47ea-4acc-a092-60aff6b86a61")
-	)
-	(label "HEADLIGHT_R_OE_GPIO41"
-		(at 201.93 61.595 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "ca6cb38f-f25b-43e5-ba51-084ed6e48c27")
 	)
 	(label "AMP_BCLK"
 		(at 92.71 65.405 0)
@@ -6858,86 +6860,6 @@
 			(project "kicad-10.0_power_wheel_dash"
 				(path "/6004b368-548f-4be6-9656-3372cb9c9fc9"
 					(reference "#PWR07")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R_Small_US")
-		(at 196.215 71.755 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "1bea9a2a-23e2-4ab3-ae37-fd8720f7efb2")
-		(property "Reference" "R4"
-			(at 196.215 65.405 90)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "10kR"
-			(at 196.215 67.945 90)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 196.215 71.755 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 196.215 71.755 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Resistor, small US symbol"
-			(at 196.215 71.755 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "d1ae0de1-dd1c-4824-adbc-34fe7fed7a87")
-		)
-		(pin "2"
-			(uuid "a4f07946-fa28-4e0b-ad1d-155ad0b6a33f")
-		)
-		(instances
-			(project "kicad-10.0_power_wheel_dash"
-				(path "/6004b368-548f-4be6-9656-3372cb9c9fc9"
-					(reference "R4")
 					(unit 1)
 				)
 			)
@@ -9466,86 +9388,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:R_Small_US")
-		(at 196.215 61.595 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "b8e4c202-3489-4082-b3d6-c4f8e7703101")
-		(property "Reference" "R3"
-			(at 196.215 55.245 90)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "10kR"
-			(at 196.215 57.785 90)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 196.215 61.595 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 196.215 61.595 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Resistor, small US symbol"
-			(at 196.215 61.595 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "e22b6734-7138-4014-841d-7339d7c81498")
-		)
-		(pin "2"
-			(uuid "d96482ab-8d6f-42f6-8806-6aee27e37f97")
-		)
-		(instances
-			(project "kicad-10.0_power_wheel_dash"
-				(path "/6004b368-548f-4be6-9656-3372cb9c9fc9"
-					(reference "R3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Audio:MAX98357A")
 		(at 148.59 32.385 0)
 		(unit 1)
@@ -9740,86 +9582,6 @@
 			(project "kicad-10.0_power_wheel_dash"
 				(path "/6004b368-548f-4be6-9656-3372cb9c9fc9"
 					(reference "#PWR021")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R_Small_US")
-		(at 196.215 51.435 90)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "c068b0c2-d792-48ca-8697-f8b92becbe54")
-		(property "Reference" "R6"
-			(at 196.215 45.085 90)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "10kR"
-			(at 196.215 47.625 90)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 196.215 51.435 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 196.215 51.435 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Resistor, small US symbol"
-			(at 196.215 51.435 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "f167c1bc-ad10-4803-9e47-d9ef8e9cedd0")
-		)
-		(pin "2"
-			(uuid "6af4d6d1-27f4-48c7-a9f3-6f600da792fc")
-		)
-		(instances
-			(project "kicad-10.0_power_wheel_dash"
-				(path "/6004b368-548f-4be6-9656-3372cb9c9fc9"
-					(reference "R6")
 					(unit 1)
 				)
 			)
@@ -10056,84 +9818,6 @@
 			(project "kicad-10.0_power_wheel_dash"
 				(path "/6004b368-548f-4be6-9656-3372cb9c9fc9"
 					(reference "R2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+24V")
-		(at 191.135 43.815 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "dcdd20dd-fc93-4cfe-b1a6-3fb2e70c9fc3")
-		(property "Reference" "#PWR014"
-			(at 191.135 47.625 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 191.135 38.735 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 191.135 43.815 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 191.135 43.815 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+24V\""
-			(at 191.135 43.815 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "83be0c64-2478-4da0-b6c4-2aba20ba3a70")
-		)
-		(instances
-			(project "kicad-10.0_power_wheel_dash"
-				(path "/6004b368-548f-4be6-9656-3372cb9c9fc9"
-					(reference "#PWR014")
 					(unit 1)
 				)
 			)

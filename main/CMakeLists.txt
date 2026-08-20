@@ -1,6 +1,7 @@
 idf_component_register(
   SRCS "main.c"
     "../src/global.c"
+    "../src/state.c"
     "../src/drivers/driver_display.c"
     "../src/drivers/driver_led.c"
     "../src/drivers/driver_sound.c"
@@ -12,7 +13,6 @@ idf_component_register(
     "../src/os/controller/controller_storage.c"
     "../src/os/controller/controller_ui.c"
     "../src/ui/ui_definitions.c"
-    "../src/ui/ui_tables.c"
     "../src/ui/screen/screen_home.c"
     "../src/ui/screen/screen_light.c"
     "../src/ui/screen/screen_sound.c"

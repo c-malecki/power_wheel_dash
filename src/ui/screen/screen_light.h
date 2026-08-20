@@ -1,10 +1,6 @@
 #ifndef __UI_SCREEN_LIGHT_H_
 #define __UI_SCREEN_LIGHT_H_
 
-#include "global.h"
-#include "lvgl.h"
-
-void Light_Select_Screen_Render(
-    lv_obj_t *screen, g_event_ui_intercept_cb ui_controller_injection_cb);
+void Light_Screen_Init(void);
 
 #endif // __UI_SCREEN_LIGHT_H_

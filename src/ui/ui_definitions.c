@@ -1,27 +1,79 @@
 #include "ui_definitions.h"
 #include "global.h"
 #include "misc/lv_color.h"
+#include "widgets/button/lv_button.h"
 
-/*
-LV_STYLE_CONST_WIDTH
-LV_STYLE_CONST_HEIGHT
-LV_STYLE_CONST_BG_COLOR
-LV_STYLE_CONST_BG_OPA
+const lv_style_t ui_style_layout_grid;
+const lv_style_t ui_style_sys_button;
+const lv_style_t ui_style_sys_button_icon;
+const lv_style_t ui_style_nav_button;
+const lv_style_t ui_style_nav_button_icon;
+const int32_t ui_style_layout_cols_1[];
+const int32_t ui_style_layout_cols_2[];
+const int32_t ui_style_layout_cols_3[];
+const int32_t ui_style_layout_rows_1[];
+const int32_t ui_style_layout_rows_2[];
 
-LV_STYLE_CONST_BORDER_WIDTH
-LV_STYLE_CONST_BORDER_COLOR
-LV_STYLE_CONST_BORDER_OPA
+void set_element_bg_color(lv_obj_t *element, G_Color_ID color_id);
 
-LV_STYLE_CONST_LAYOUT
-LV_STYLE_CONST_ALIGN
+lv_obj_t *UI_Create_Grid(lv_obj_t *screen, UI_Style_Layout_Grid_ID grid_id) {
+  lv_obj_t *layout = lv_obj_create(screen);
+  lv_obj_add_style(layout, &ui_style_layout_grid, 0);
 
-LV_STYLE_X
-LV_STYLE_Y
+  switch (grid_id) {
+  case UI_STYLE_LAYOUT_GRID_2x1: {
+    lv_obj_set_grid_dsc_array(layout, ui_style_layout_cols_2,
+                              ui_style_layout_rows_1);
+    break;
+  }
 
-LV_STYLE_CONST_RADIUS
-LV_STYLE_CONST_PAD_TOP (BOTTOM, LEFT, RIGHT)
+  case UI_STYLE_LAYOUT_GRID_3x2: {
+    lv_obj_set_grid_dsc_array(layout, ui_style_layout_cols_3,
+                              ui_style_layout_rows_2);
+    break;
+  }
 
-*/
+  case UI_STYLE_LAYOUT_GRID_NONE: {
+    break;
+  }
+  }
+
+  return layout;
+}
+
+lv_obj_t *UI_Create_Button(lv_obj_t *parent, UI_Style_Element_ID style_id,
+                           G_Color_ID color_id, const char *icon) {
+  lv_obj_t *button = lv_button_create(parent);
+
+  switch (style_id) {
+  case UI_STYLE_ELEMENT_SYS_BUTTON: {
+    lv_obj_add_style(button, &ui_style_sys_button, 0);
+    if (icon != NULL) {
+      lv_obj_t *label = lv_label_create(button);
+      lv_obj_add_style(label, &ui_style_sys_button_icon, 0);
+      lv_label_set_text(label, icon);
+    }
+    break;
+  }
+
+  case UI_STYLE_ELEMENT_NAV_BUTTON: {
+    lv_obj_add_style(button, &ui_style_nav_button, 0);
+    if (icon != NULL) {
+      lv_obj_t *label = lv_label_create(button);
+      lv_obj_add_style(label, &ui_style_nav_button_icon, 0);
+      lv_label_set_text(label, icon);
+    }
+    break;
+  }
+
+  case UI_STYLE_ELEMENT_NONE:
+    break;
+  }
+
+  set_element_bg_color(button, color_id);
+
+  return button;
+};
 
 /*
   STYLES
@@ -74,23 +126,7 @@ const int32_t ui_style_layout_rows_1[] = {LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
 const int32_t ui_style_layout_rows_2[] = {LV_GRID_FR(1), LV_GRID_FR(1),
                                           LV_GRID_TEMPLATE_LAST};
 
-lv_obj_t *UI_Create_Grid_2x1(lv_obj_t *screen) {
-  lv_obj_t *layout = lv_obj_create(screen);
-  lv_obj_add_style(layout, &ui_style_layout_grid, 0);
-  lv_obj_set_grid_dsc_array(layout, ui_style_layout_cols_2,
-                            ui_style_layout_rows_1);
-  return layout;
-}
-
-lv_obj_t *UI_Create_Grid_3x2(lv_obj_t *screen) {
-  lv_obj_t *layout = lv_obj_create(screen);
-  lv_obj_add_style(layout, &ui_style_layout_grid, 0);
-  lv_obj_set_grid_dsc_array(layout, ui_style_layout_cols_3,
-                            ui_style_layout_rows_2);
-  return layout;
-}
-
-void UI_Set_Element_BG_Color(lv_obj_t *element, G_Color_ID color_id) {
+void set_element_bg_color(lv_obj_t *element, G_Color_ID color_id) {
   lv_color_t color;
 
   switch (color_id) {

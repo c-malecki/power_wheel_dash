@@ -1,11 +1,7 @@
 #ifndef __OS_MANAGER_H_
 #define __OS_MANAGER_H_
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
-
-extern QueueHandle_t g_event_queue;
-extern SemaphoreHandle_t lvgl_mutex;
+#include "esp_err.h"
 
 esp_err_t OS_Manager_Init(void);
 

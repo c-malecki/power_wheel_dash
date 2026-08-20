@@ -4,17 +4,7 @@
         {
             "label": "ESP-IDF: Dev Build, Flash & Monitor",
             "type": "shell",
-            "command": "idf.py -DDEVELOPMENT=1 build flash monitor",
-            "windows": {
-                "options": {
-                    "shell": {
-                        "executable": "cmd.exe",
-                        "args": [
-                            "/c"
-                        ]
-                    }
-                }
-            },
+            "command": "bash -ic 'espidf && idf.py -DDEVELOPMENT=1 build flash monitor'",
             "options": {
                 "cwd": "${workspaceFolder}"
             },

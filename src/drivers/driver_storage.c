@@ -34,7 +34,7 @@ esp_err_t StorageDriver_Init(void) {
   };
 
   sdmmc_card_t *card;
-  const char mount_point[] = MSD_MOUNT_POINT;
+  const char mount_point[] = MICROSD_MOUNT_POINT;
 
   sdmmc_host_t host = SDSPI_HOST_DEFAULT();
   host.slot = SPI3_HOST;

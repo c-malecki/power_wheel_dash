@@ -1,7 +1,7 @@
 #ifndef __CONTROLLER_LIGHT_H_
 #define __CONTROLLER_LIGHT_H_
 
-#include "global.h"
+#include "state.h"
 
 void Light_Controller_Init(void);
 void Light_Controller_RX(G_Event_t *g_event);
