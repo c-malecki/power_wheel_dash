@@ -14,20 +14,7 @@ void create_sys_home_btn(void);
 
 static lv_subject_t show_sys_home;
 
-lv_subject_t subject_pending_screen_id;
-lv_subject_t subject_active_screen_id;
-
 SemaphoreHandle_t ui_controller_mutex = NULL;
-
-static void g_state_observer_cb(lv_observer_t *observer,
-                                lv_subject_t *subject) {
-  G_State_t *g_state = (G_State_t *)lv_subject_get_pointer(subject);
-
-  if (status == SYSTEM_STATUS_CRITICAL_FAULT) {
-    // Intercept and force the UI to display the error overlay or alert screen
-    lv_subject_set_int(&active_screen_subject, UI_SCREEN_ID_SETTINGS);
-  }
-}
 
 static void display_task(void *arg) {
   const TickType_t period = pdMS_TO_TICKS(10);
@@ -53,19 +40,14 @@ static void pending_screen_cb(lv_observer_t *observer, lv_subject_t *subject) {
 
   // handle
 
-  lv_subject_set_int(&subject_active_screen_id, screen_id);
+  lv_subject_set_int(&state_active_screen_id, screen_id);
 }
 
 void UI_Controller_Init(void) {
   ui_controller_mutex = xSemaphoreCreateMutex();
   assert(ui_controller_mutex != NULL);
 
-  lv_subject_init_int(&subject_pending_screen_id, UI_SCREEN_NONE);
-  lv_subject_init_int(&subject_active_screen_id, UI_SCREEN_NONE);
-
-  ESP_LOGI("UI_CONTROLLER", "before add subject observer");
-  lv_subject_add_observer(&subject_pending_screen_id, pending_screen_cb, NULL);
-  ESP_LOGI("UI_CONTROLLER", "after add subject observer");
+  lv_subject_add_observer(&state_pending_screen_id, pending_screen_cb, NULL);
 
   create_sys_home_btn();
 
@@ -91,7 +73,7 @@ static void sys_home_touch_cb(lv_event_t *lv_event) {
     return;
   }
 
-  lv_subject_set_int(&subject_pending_screen_id, UI_SCREEN_HOME);
+  lv_subject_set_int(&state_pending_screen_id, UI_SCREEN_HOME);
 }
 
 void create_sys_home_btn(void) {

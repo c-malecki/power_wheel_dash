@@ -31,6 +31,7 @@
 /*
   LCD
 */
+
 #define LCD_PIN_SPI_MOSI (11)
 #define LCD_PIN_SPI_CLK (12)
 #define LCD_PIN_SPI_MISO (13)
@@ -45,6 +46,7 @@
   MicroSD Card
   https://docs.espressif.com/projects/esp-idf/en/release-v6.1/esp32s3/api-reference/peripherals/sdmmc_host.html
 */
+
 #define MICROSD_PIN_SPI_MOSI (37)
 #define MICROSD_PIN_SPI_CLK (36)
 #define MICROSD_PIN_SPI_MISO (35)
@@ -55,6 +57,7 @@
 /*
   WS2812 LEDs
 */
+
 #define LED_PIN_HLL_DC (1)
 #define LED_PIN_HLR_DC (2)
 #define LED_PIN_BLL_DC (41)

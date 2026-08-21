@@ -1,16 +1,28 @@
 #include "screen_light.h"
-#include "controller_ui.h"
 #include "global.h"
+#include "state.h"
 #include "ui_definitions.h"
 
 static lv_obj_t *screen_obj;
-static void trigger_render_observer_cb(lv_observer_t *observer,
-                                       lv_subject_t *subject);
 
-static void input_event_cb(lv_event_t *lv_event) {
+static void screen_light_touch_cb(lv_event_t *lv_event) {
   lv_event_code_t code = lv_event_get_code(lv_event);
   if (code != LV_EVENT_CLICKED) {
     return;
+  }
+
+  // show color picker
+}
+
+static void screen_light_observer_cb(lv_observer_t *observer,
+                                     lv_subject_t *subject) {
+  UI_Screen_ID active_screen_id = (UI_Screen_ID)lv_subject_get_int(subject);
+  lv_obj_t *new_screen = lv_observer_get_target_obj(observer);
+
+  if (active_screen_id == UI_SCREEN_LIGHT) {
+    if (lv_screen_active() != new_screen) {
+      lv_scr_load_anim(screen_obj, LV_SCR_LOAD_ANIM_FADE_IN, 300, 0, false);
+    }
   }
 }
 
@@ -20,33 +32,22 @@ void Light_Screen_Init(void) {
 
   lv_obj_t *headlight_btn = UI_Create_Button(
       layout, UI_STYLE_ELEMENT_NAV_BUTTON, G_COLOR_YELLOW, LV_SYMBOL_LEFT);
-  lv_obj_add_event_cb(headlight_btn, input_event_cb, LV_EVENT_CLICKED,
-                      (void *)UI_ELEMENT_LIGHT_SCREEN_HEADLIGHTS_BTN);
   lv_obj_set_grid_cell(headlight_btn, LV_GRID_ALIGN_CENTER, 0, 1,
                        LV_GRID_ALIGN_CENTER, 0, 1);
 
+  lv_obj_add_event_cb(headlight_btn, screen_light_touch_cb, LV_EVENT_CLICKED,
+                      (void *)UI_ELEMENT_LIGHT_SCREEN_HEADLIGHTS_BTN);
+
   lv_obj_t *bodylight_btn = UI_Create_Button(
       layout, UI_STYLE_ELEMENT_NAV_BUTTON, G_COLOR_YELLOW, LV_SYMBOL_DRIVE);
-  lv_obj_add_event_cb(bodylight_btn, input_event_cb, LV_EVENT_CLICKED,
-                      (void *)UI_ELEMENT_LIGHT_SCREEN_BODYLIGHTS_BTN);
   lv_obj_set_grid_cell(bodylight_btn, LV_GRID_ALIGN_CENTER, 1, 1,
                        LV_GRID_ALIGN_CENTER, 0, 1);
 
-  lv_subject_add_observer_obj(&subject_active_screen_id,
-                              trigger_render_observer_cb, screen_obj, NULL);
-}
+  lv_obj_add_event_cb(bodylight_btn, screen_light_touch_cb, LV_EVENT_CLICKED,
+                      (void *)UI_ELEMENT_LIGHT_SCREEN_BODYLIGHTS_BTN);
 
-// boiler plate
-static void trigger_render_observer_cb(lv_observer_t *observer,
-                                       lv_subject_t *subject) {
-  UI_Screen_ID active_screen_id = (UI_Screen_ID)lv_subject_get_int(subject);
-  lv_obj_t *new_screen = lv_observer_get_target_obj(observer);
-
-  if (active_screen_id == UI_SCREEN_LIGHT) {
-    if (lv_screen_active() != new_screen) {
-      lv_scr_load_anim(screen_obj, LV_SCR_LOAD_ANIM_FADE_IN, 300, 0, false);
-    }
-  }
+  lv_subject_add_observer_obj(&state_active_screen_id, screen_light_observer_cb,
+                              screen_obj, NULL);
 }
 
 /*
@@ -72,7 +73,7 @@ static const color_picker_map_table_t color_picker_lookup_table[] = {
 };
 
 // local scope/not injected elsewhere
-static void input_event_cb(lv_event_t *lv_event);
+static void screen_light_touch_cb(lv_event_t *lv_event);
 static G_Color_ID get_mapped_color_id(const char *map_entry);
 
 // callback given to the color picker so that it doesn't hold state
@@ -99,7 +100,7 @@ static void color_picker_injection_cb(lv_event_t *lv_event) {
 }
 */
 
-// static void input_event_cb(lv_event_t *lv_event) {
+// static void screen_light_touch_cb(lv_event_t *lv_event) {
 //   lv_event_code_t code = lv_event_get_code(lv_event);
 //   if (code != LV_EVENT_CLICKED) {
 //     return;

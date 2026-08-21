@@ -5,10 +5,16 @@
 #include "freertos/semphr.h"
 #include "global.h"
 #include "lvgl.h"
+#include "ui_definitions.h"
 #include <stdint.h>
 
 extern QueueHandle_t g_event_queue;
 extern SemaphoreHandle_t g_state_mutex;
+
+extern lv_subject_t state_active_screen_id;
+extern lv_subject_t state_pending_screen_id;
+extern lv_subject_t state_headlight_color_id;
+extern lv_subject_t state_bodylight_color_id;
 
 typedef struct {
   G_Controller_ID tx_controller_id;
@@ -20,18 +26,6 @@ typedef struct {
 
 typedef void (*g_event_ui_intercept_cb)(G_Event_t *g_event);
 
-typedef enum {
-  G_STATE_PROP_NONE = 0,
-  G_STATE_PROP_HEADLIGHT_COLOR,
-  G_STATE_PROP_BODYLIGHT_COLOR,
-} G_State_Prop_ID;
-
-typedef struct {
-  lv_subject_t light_headlight_color;
-  lv_subject_t light_bodylight_color;
-} G_State_t;
-
 void G_State_Init(void);
-void G_State_SetPropValue(G_State_Prop_ID state_prop_id, uint32_t payload);
 
 #endif // __STATE_H_

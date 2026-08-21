@@ -51,13 +51,13 @@ esp_err_t OS_Manager_Init(void) {
   ESP_LOGI("OS_MANANGER", "UI_Controller initialized");
 
   Storage_Controller_Init();
-  // ESP_LOGI("OS_MANANGER", "Storage_Controller initialized");
+  ESP_LOGI("OS_MANANGER", "Storage_Controller initialized");
 
   Sound_Controller_Init();
-  // ESP_LOGI("OS_MANANGER", "Sound_Controller initialized");
+  ESP_LOGI("OS_MANANGER", "Sound_Controller initialized");
 
   Light_Controller_Init();
-  // ESP_LOGI("OS_MANANGER", "Light_Controller initialized");
+  ESP_LOGI("OS_MANANGER", "Light_Controller initialized");
 
   xTaskCreatePinnedToCore(os_manager_task, "os_manager_task", 8192, NULL, 10,
                           NULL, 0);
