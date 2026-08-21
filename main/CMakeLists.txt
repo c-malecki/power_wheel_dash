@@ -13,6 +13,7 @@ idf_component_register(
     "../src/os/controller/controller_storage.c"
     "../src/os/controller/controller_ui.c"
     "../src/ui/ui_definitions.c"
+    "../src/ui/layer/layer_os.c"
     "../src/ui/screen/screen_home.c"
     "../src/ui/screen/screen_light.c"
     "../src/ui/screen/screen_sound.c"
@@ -23,6 +24,7 @@ idf_component_register(
     "../src/os"
     "../src/os/controller"
     "../src/ui"
+    "../src/ui/layer"
     "../src/ui/screen"
     "../src/ui/widget"
 

@@ -1,11 +1,11 @@
 #include "driver_display.h"
+#include "config.h"
 #include "esp_lcd_ili9341.h"
 #include "esp_lcd_panel_io.h"
 #include "esp_lcd_panel_ops.h"
 #include "esp_lcd_touch_xpt2046.h"
 #include "esp_log.h"
 #include "esp_timer.h"
-#include "global.h"
 #include "lvgl.h"
 #include <stdint.h>
 

@@ -1,7 +1,6 @@
 #include "controller_ui.h"
-#include "core/lv_observer.h"
 #include "esp_log.h"
-#include "global.h"
+#include "layer_os.h"
 #include "screen_home.h"
 #include "screen_light.h"
 #include "screen_sound.h"
@@ -10,20 +9,16 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-void create_sys_home_btn(void);
-
-static lv_subject_t show_sys_home;
-
-SemaphoreHandle_t ui_controller_mutex = NULL;
+SemaphoreHandle_t lvgl_mutex = NULL;
 
 static void display_task(void *arg) {
   const TickType_t period = pdMS_TO_TICKS(10);
   TickType_t last_wake = xTaskGetTickCount();
 
   while (1) {
-    xSemaphoreTake(ui_controller_mutex, portMAX_DELAY);
+    xSemaphoreTake(lvgl_mutex, portMAX_DELAY);
     lv_timer_handler();
-    xSemaphoreGive(ui_controller_mutex);
+    xSemaphoreGive(lvgl_mutex);
 
     vTaskDelayUntil(&last_wake, period);
   }
@@ -44,12 +39,12 @@ static void pending_screen_cb(lv_observer_t *observer, lv_subject_t *subject) {
 }
 
 void UI_Controller_Init(void) {
-  ui_controller_mutex = xSemaphoreCreateMutex();
-  assert(ui_controller_mutex != NULL);
+  lvgl_mutex = xSemaphoreCreateMutex();
+  assert(lvgl_mutex != NULL);
 
   lv_subject_add_observer(&state_pending_screen_id, pending_screen_cb, NULL);
 
-  create_sys_home_btn();
+  Layer_OS_Init();
 
   Home_Screen_Init();
   Sound_Screen_Init();
@@ -59,30 +54,4 @@ void UI_Controller_Init(void) {
                           1);
 }
 
-void UI_Controller_RX(G_Event_t *g_event) {
-  /*
-
-  */
-}
-
-/* */
-
-static void sys_home_touch_cb(lv_event_t *lv_event) {
-  lv_event_code_t code = lv_event_get_code(lv_event);
-  if (code != LV_EVENT_CLICKED) {
-    return;
-  }
-
-  lv_subject_set_int(&state_pending_screen_id, UI_SCREEN_HOME);
-}
-
-void create_sys_home_btn(void) {
-  lv_obj_t *home_button =
-      UI_Create_Button(lv_layer_top(), UI_STYLE_ELEMENT_SYS_BUTTON,
-                       G_COLOR_GRAY, LV_SYMBOL_HOME);
-  lv_obj_set_pos(home_button, 10, 10);
-  lv_obj_add_event_cb(home_button, sys_home_touch_cb, LV_EVENT_CLICKED, NULL);
-
-  lv_subject_init_int(&show_sys_home, 1);
-  lv_obj_bind_flag_if_eq(home_button, &show_sys_home, LV_OBJ_FLAG_HIDDEN, 1);
-}
+void UI_Controller_RX(G_Event_t *g_event) {}

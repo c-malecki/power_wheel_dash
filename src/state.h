@@ -15,6 +15,7 @@ extern lv_subject_t state_active_screen_id;
 extern lv_subject_t state_pending_screen_id;
 extern lv_subject_t state_headlight_color_id;
 extern lv_subject_t state_bodylight_color_id;
+extern lv_subject_t state_show_layer_os;
 
 typedef struct {
   G_Controller_ID tx_controller_id;

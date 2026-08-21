@@ -12,6 +12,7 @@ typedef enum {
   UI_STYLE_LAYOUT_GRID_NONE = 0,
   UI_STYLE_LAYOUT_GRID_2x1,
   UI_STYLE_LAYOUT_GRID_3x2,
+  UI_STYLE_LAYOUT_GRID_5x3,
 } UI_Style_Layout_Grid_ID;
 
 typedef enum {

@@ -1,8 +1,6 @@
 #include "screen_home.h"
 #include "global.h"
 #include "state.h"
-#include "ui_definitions.h"
-#include <stdint.h>
 
 static lv_obj_t *screen_obj;
 

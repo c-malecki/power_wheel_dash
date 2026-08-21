@@ -1,11 +1,11 @@
 #include "driver_sound.h"
+#include "config.h"
 #include "driver/i2s_common.h"
 #include "driver/i2s_std.h"
 #include "esp_err.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
-#include "global.h"
 #include <stdio.h>
 #include <wchar.h>
 

@@ -1,8 +1,8 @@
 
 #include "driver_storage.h"
+#include "config.h"
 #include "esp_log.h"
 #include "esp_vfs_fat.h"
-#include "global.h"
 #include "sdmmc_cmd.h"
 #include <sys/stat.h>
 #include <sys/unistd.h>

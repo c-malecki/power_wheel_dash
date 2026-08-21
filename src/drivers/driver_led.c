@@ -1,5 +1,5 @@
 #include "driver_led.h"
-#include "global.h"
+#include "config.h"
 #include "led_strip.h"
 #include "led_strip_types.h"
 #include <stdint.h>
