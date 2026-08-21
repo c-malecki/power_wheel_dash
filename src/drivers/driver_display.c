@@ -1,5 +1,5 @@
 #include "driver_display.h"
-#include "driver/spi_master.h"
+#include "config.h"
 #include "esp_lcd_ili9341.h"
 #include "esp_lcd_panel_io.h"
 #include "esp_lcd_panel_ops.h"
@@ -22,11 +22,11 @@ void init_lvgl(void);
 
 /* INTERFACE */
 
-esp_err_t DisplayDriver_Init() {
+esp_err_t Driver_Display_Init() {
   spi_bus_config_t spi_bus_lcd = {
-      .sclk_io_num = SPI_CLK_PIN_LCD,
-      .mosi_io_num = SPI_MOSI_PIN_LCD,
-      .miso_io_num = SPI_MISO_PIN_LCD,
+      .sclk_io_num = LCD_PIN_SPI_CLK,
+      .mosi_io_num = LCD_PIN_SPI_MOSI,
+      .miso_io_num = LCD_PIN_SPI_MISO,
       .quadwp_io_num = -1,
       .quadhd_io_num = -1,
       .max_transfer_sz = 240 * 320 * sizeof(uint16_t),
@@ -103,21 +103,21 @@ static void flush_exec_cb(lv_display_t *disp, const lv_area_t *area,
 }
 
 esp_err_t init_panel(void) {
-  gpio_config_t bk_gpio_config = {
-      .mode = GPIO_MODE_OUTPUT, .pin_bit_mask = (1ULL << DISPLAY_LCD_LED_PIN)};
+  gpio_config_t bk_gpio_config = {.mode = GPIO_MODE_OUTPUT,
+                                  .pin_bit_mask = (1ULL << LCD_PIN_LED)};
   esp_err_t err = gpio_config(&bk_gpio_config);
   if (err != ESP_OK) {
     return err;
   }
 
-  err = gpio_set_level(DISPLAY_LCD_LED_PIN, 1);
+  err = gpio_set_level(LCD_PIN_LED, 1);
   if (err != ESP_OK) {
     return err;
   }
 
   esp_lcd_panel_io_spi_config_t io_config = {
-      .dc_gpio_num = DISPLAY_LCD_DC_PIN,
-      .cs_gpio_num = DISPLAY_LCD_CS_PIN,
+      .dc_gpio_num = LCD_PIN_DC,
+      .cs_gpio_num = LCD_PIN_CS,
       .pclk_hz = 20 * 1000 * 1000,
       .lcd_cmd_bits = 8,
       .lcd_param_bits = 8,
@@ -131,7 +131,7 @@ esp_err_t init_panel(void) {
   }
 
   esp_lcd_panel_dev_config_t panel_config = {
-      .reset_gpio_num = DISPLAY_LCD_RST_PIN,
+      .reset_gpio_num = LCD_PIN_RST,
       .rgb_ele_order = LCD_RGB_ELEMENT_ORDER_BGR,
       .bits_per_pixel = 16,
   };
@@ -162,7 +162,7 @@ esp_err_t init_panel(void) {
 esp_err_t init_touch(void) {
   esp_lcd_panel_io_handle_t touch_io_handle = NULL;
   esp_lcd_panel_io_spi_config_t touch_io_config =
-      ESP_LCD_TOUCH_IO_SPI_XPT2046_CONFIG(DISPLAY_LCD_T_CS_PIN);
+      ESP_LCD_TOUCH_IO_SPI_XPT2046_CONFIG(LCD_PIN_T_CS);
   ESP_ERROR_CHECK(esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)SPI2_HOST,
                                            &touch_io_config, &touch_io_handle));
 
@@ -170,7 +170,7 @@ esp_err_t init_touch(void) {
       .x_max = 240,
       .y_max = 320,
       .rst_gpio_num = GPIO_NUM_NC,
-      .int_gpio_num = DISPLAY_LCD_T_IRQ_PIN,
+      .int_gpio_num = LCD_PIN_T_IRQ,
       .flags =
           {
               .swap_xy = 1,

@@ -1,5 +1,5 @@
 #include "driver_led.h"
-#include "global.h"
+#include "config.h"
 #include "led_strip.h"
 #include "led_strip_types.h"
 #include <stdint.h>
@@ -12,28 +12,36 @@ static led_strip_handle_t strip_hlr_handle;
 static led_strip_handle_t strip_body_handle;
 
 static const led_strip_config_t hll_config = {
-    .strip_gpio_num = LED_HLL_DC_PIN,
-    .max_leds = LED_HL_MAX_LEDS,
+    .strip_gpio_num = LED_PIN_HLL_DC,
+    .max_leds = LED_STRIP_MAX_LEDS,
     .led_model = LED_MODEL_WS2812,
     .color_component_format = LED_STRIP_COLOR_COMPONENT_FMT_GRB,
     .flags.invert_out = false,
 };
 
-// static const led_strip_config_t hlr_config = {
-//     .strip_gpio_num = LED_HLR_DC_PIN,
-//     .max_leds = LED_HL_MAX_LEDS,
-//     .led_model = LED_MODEL_WS2812,
-//     .color_component_format = LED_STRIP_COLOR_COMPONENT_FMT_GRB,
-//     .flags.invert_out = false,
-// };
+static const led_strip_config_t hlr_config = {
+    .strip_gpio_num = LED_PIN_HLR_DC,
+    .max_leds = LED_STRIP_MAX_LEDS,
+    .led_model = LED_MODEL_WS2812,
+    .color_component_format = LED_STRIP_COLOR_COMPONENT_FMT_GRB,
+    .flags.invert_out = false,
+};
 
-// static const led_strip_config_t body_config = {
-//     .strip_gpio_num = LED_BODY_DC_PIN,
-//     .max_leds = LED_BODY_MAX_LEDS,
-//     .led_model = LED_MODEL_WS2812,
-//     .color_component_format = LED_STRIP_COLOR_COMPONENT_FMT_GRB,
-//     .flags.invert_out = false,
-// };
+static const led_strip_config_t bll_config = {
+    .strip_gpio_num = LED_PIN_BLL_DC,
+    .max_leds = LED_STRIP_MAX_LEDS,
+    .led_model = LED_MODEL_WS2812,
+    .color_component_format = LED_STRIP_COLOR_COMPONENT_FMT_GRB,
+    .flags.invert_out = false,
+};
+
+static const led_strip_config_t blr_config = {
+    .strip_gpio_num = LED_PIN_BLR_DC,
+    .max_leds = LED_STRIP_MAX_LEDS,
+    .led_model = LED_MODEL_WS2812,
+    .color_component_format = LED_STRIP_COLOR_COMPONENT_FMT_GRB,
+    .flags.invert_out = false,
+};
 
 static const led_strip_rmt_config_t rmt_config = {
     .clk_src = RMT_CLK_SRC_DEFAULT,
@@ -41,7 +49,7 @@ static const led_strip_rmt_config_t rmt_config = {
     .flags.with_dma = false,
 };
 
-void set_color(led_strip_handle_t strip, uint8_t i, G_Color_ID color_id) {
+void set_color(led_strip_handle_t strip, uint8_t i, Sys_Color_ID color_id) {
   switch (color_id) {
   case G_COLOR_WHITE:
     led_strip_set_pixel(strip, i, g_color_white.r, g_color_white.g,
@@ -88,12 +96,12 @@ void set_color(led_strip_handle_t strip, uint8_t i, G_Color_ID color_id) {
   }
 }
 
-void strip_set_color(LED_Strip_ID strip_id, G_Color_ID color_id) {
+void strip_set_color(LED_Strip_ID strip_id, Sys_Color_ID color_id) {
   switch (strip_id) {
   case LED_STRIP_HEADLIGHT:
     led_strip_clear(strip_hll_handle);
     // led_strip_clear(strip_hlr_handle);
-    for (uint8_t i = 0; i < LED_HL_MAX_LEDS; i++) {
+    for (uint8_t i = 0; i < LED_STRIP_MAX_LEDS; i++) {
       set_color(strip_hll_handle, i, color_id);
       // set_color(strip_hlr_handle, i, color_id);
     }
@@ -103,7 +111,7 @@ void strip_set_color(LED_Strip_ID strip_id, G_Color_ID color_id) {
 
   case LED_STRIP_BODYLIGHT:
     led_strip_clear(strip_body_handle);
-    for (uint8_t i = 0; i < LED_HL_MAX_LEDS; i++) {
+    for (uint8_t i = 0; i < LED_STRIP_MAX_LEDS; i++) {
       set_color(strip_body_handle, i, color_id);
     }
     led_strip_refresh(strip_body_handle);
@@ -117,31 +125,36 @@ void strip_set_color(LED_Strip_ID strip_id, G_Color_ID color_id) {
   }
 }
 
-esp_err_t LEDDriver_Init(void) {
-  return led_strip_new_rmt_device(&hll_config, &rmt_config, &strip_hll_handle);
-}
-
-// esp_err_t LED_Init(void) {
-//   esp_err_t err =
-//       led_strip_new_rmt_device(&hll_config, &rmt_config, &strip_hll_handle);
-//   if (err != ESP_OK) {
-//     return err;
-//   }
-
-//   err = led_strip_new_rmt_device(&hlr_config, &rmt_config,
-//   &strip_hlr_handle); if (err != ESP_OK) {
-//     return err;
-//   }
-
-//   return led_strip_new_rmt_device(&body_config, &rmt_config,
-//                                   &strip_body_handle);
+// esp_err_t Driver_LED_Init(void) {
+//   return led_strip_new_rmt_device(&hll_config, &rmt_config,
+//   &strip_hll_handle);
 // }
 
-void LEDDriver_SetHeadlights(G_Color_ID color_id) {
+esp_err_t Driver_LED_Init(void) {
+  esp_err_t err =
+      led_strip_new_rmt_device(&hll_config, &rmt_config, &strip_hll_handle);
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  err = led_strip_new_rmt_device(&hlr_config, &rmt_config, &strip_hlr_handle);
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  err = led_strip_new_rmt_device(&bll_config, &rmt_config, &strip_hlr_handle);
+  if (err != ESP_OK) {
+    return err;
+  }
+
+  return led_strip_new_rmt_device(&blr_config, &rmt_config, &strip_body_handle);
+}
+
+void LEDDriver_SetHeadlights(Sys_Color_ID color_id) {
   strip_set_color(LED_STRIP_HEADLIGHT, color_id);
 }
 
-void LEDDriver_SetBodylights(G_Color_ID color_id) {
+void LEDDriver_SetBodylights(Sys_Color_ID color_id) {
   strip_set_color(LED_STRIP_BODYLIGHT, color_id);
 }
 

@@ -22,14 +22,13 @@ static void draw_cb(lv_event_t *lv_event) {
     return;
   }
 
-  G_Color_t c = Global_Color_Lookup(color_table[draw_base->id1].color_id);
+  Sys_Color_t c = Sys_Color_Lookup(color_table[draw_base->id1].color_id);
   fill->color = lv_color_make(c.r, c.g, c.b);
 }
 
 lv_obj_t *Color_Picker_Create(lv_obj_t *parent, const char *map[],
                               const color_picker_map_table_t *table,
-                              size_t table_len, color_picker_cb cb) {
-  event_cb = cb;
+                              size_t table_len) {
   color_table = table;
   color_table_len = table_len;
 
@@ -47,3 +46,5 @@ lv_obj_t *Color_Picker_Create(lv_obj_t *parent, const char *map[],
 
   return bm;
 }
+
+void Color_Picker_Register_CB(color_picker_cb cb) { event_cb = cb; }

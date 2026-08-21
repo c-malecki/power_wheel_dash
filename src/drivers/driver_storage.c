@@ -1,8 +1,8 @@
 
 #include "driver_storage.h"
+#include "config.h"
 #include "esp_log.h"
 #include "esp_vfs_fat.h"
-#include "global.h"
 #include "sdmmc_cmd.h"
 #include <sys/stat.h>
 #include <sys/unistd.h>
@@ -13,11 +13,11 @@ https://docs.espressif.com/projects/esp-idf/en/release-v6.1/esp32s3/api-referenc
 
 sdmmc_card_t *sd_card = NULL;
 
-esp_err_t StorageDriver_Init(void) {
+esp_err_t Driver_Storage_Init(void) {
   spi_bus_config_t spi_bus_msd = {
-      .sclk_io_num = SPI_CLK_PIN_MSD,
-      .mosi_io_num = SPI_MOSI_PIN_MSD,
-      .miso_io_num = SPI_MISO_PIN_MSD,
+      .sclk_io_num = MICROSD_PIN_SPI_CLK,
+      .mosi_io_num = MICROSD_PIN_SPI_MOSI,
+      .miso_io_num = MICROSD_PIN_SPI_MISO,
       .quadwp_io_num = -1,
       .quadhd_io_num = -1,
       .max_transfer_sz = 4000,
@@ -34,17 +34,17 @@ esp_err_t StorageDriver_Init(void) {
   };
 
   sdmmc_card_t *card;
-  const char mount_point[] = MSD_MOUNT_POINT;
+  const char mount_point[] = MICROSD_MOUNT_POINT;
 
   sdmmc_host_t host = SDSPI_HOST_DEFAULT();
   host.slot = SPI3_HOST;
   host.unaligned_multi_block_rw_max_chunk_size = 8;
   // HW-125 MicroSD module is not reliable without slower speed
-  host.max_freq_khz = MSD_MAX_FREQ;
+  host.max_freq_khz = MICROSD_MAX_FREQ;
 
   sdspi_device_config_t slot_config = SDSPI_DEVICE_CONFIG_DEFAULT();
   slot_config.host_id = SPI3_HOST;
-  slot_config.gpio_cs = MSD_CS_PIN;
+  slot_config.gpio_cs = MICROSD_PIN_SPI_CS;
 
   err = esp_vfs_fat_sdspi_mount(mount_point, &host, &slot_config, &mount_config,
                                 &card);

@@ -1,16 +1,17 @@
 #include "driver_sound.h"
+#include "config.h"
+#include "driver/i2s_common.h"
 #include "driver/i2s_std.h"
 #include "esp_err.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
-#include "global.h"
 #include <stdio.h>
 #include <wchar.h>
 
 static i2s_chan_handle_t i2s_tx_chan;
 
-esp_err_t SoundDriver_Init(void) {
+esp_err_t Driver_Sound_Init(void) {
   i2s_chan_config_t chan_cfg =
       I2S_CHANNEL_DEFAULT_CONFIG(I2S_NUM_0, I2S_ROLE_MASTER);
   esp_err_t ret = i2s_new_channel(&chan_cfg, &i2s_tx_chan, NULL);
@@ -24,10 +25,10 @@ esp_err_t SoundDriver_Init(void) {
       .gpio_cfg =
           {
               .mclk = I2S_GPIO_UNUSED,
-              .bclk = SOUND_AMP_BCLK_PIN,
-              .ws = SOUND_AMP_LRC_PIN,
-              .dout = SOUND_AMP_DIN_PIN,
-              .din = I2S_GPIO_UNUSED,
+              .bclk = AUDIO_AMP_PIN_BCLK,
+              .ws = AUDIO_AMP_PIN_LRC,
+              .dout = I2S_GPIO_UNUSED,
+              .din = AUDIO_AMP_PIN_DIN,
           },
   };
   ret = i2s_channel_init_std_mode(i2s_tx_chan, &std_cfg);
