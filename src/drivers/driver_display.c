@@ -22,7 +22,7 @@ void init_lvgl(void);
 
 /* INTERFACE */
 
-esp_err_t DisplayDriver_Init() {
+esp_err_t Driver_Display_Init() {
   spi_bus_config_t spi_bus_lcd = {
       .sclk_io_num = LCD_PIN_SPI_CLK,
       .mosi_io_num = LCD_PIN_SPI_MOSI,

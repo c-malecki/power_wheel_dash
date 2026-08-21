@@ -1,7 +1,7 @@
 #include "screen_home.h"
-#include "state.h"
+#include "model.h"
 #include "types.h"
-#include "ui_helpers.h"
+#include "ui.h"
 
 static lv_obj_t *screen_obj;
 
@@ -11,16 +11,15 @@ static void screen_home_touch_cb(lv_event_t *lv_event) {
     return;
   }
 
-  UI_Screen_ID screen_id =
-      (UI_Screen_ID)(uintptr_t)lv_event_get_user_data(lv_event);
+  Sys_Screen_ID screen_id =
+      (Sys_Screen_ID)(uintptr_t)lv_event_get_user_data(lv_event);
 
-  lv_subject_set_int(&state_pending_screen_id, screen_id);
+  SYS_MODEL_SET_PROP(SYSTEM_MODEL_PROP_PENDING_SCREEN_ID, screen_id);
 }
 
-// state_active_screen_id
 static void screen_home_observer_cb(lv_observer_t *observer,
                                     lv_subject_t *subject) {
-  UI_Screen_ID active_screen_id = (UI_Screen_ID)lv_subject_get_int(subject);
+  Sys_Screen_ID active_screen_id = (Sys_Screen_ID)lv_subject_get_int(subject);
   lv_obj_t *new_screen = lv_observer_get_target_obj(observer);
 
   if (active_screen_id == UI_SCREEN_HOME) {
@@ -50,6 +49,6 @@ void Home_Screen_Init(void) {
   lv_obj_add_event_cb(sound_button, screen_home_touch_cb, LV_EVENT_CLICKED,
                       (void *)UI_SCREEN_SOUND);
 
-  lv_subject_add_observer_obj(&state_active_screen_id, screen_home_observer_cb,
-                              screen_obj, NULL);
+  lv_subject_add_observer_obj(&SYS_MODEL.active_screen_id,
+                              screen_home_observer_cb, screen_obj, NULL);
 }

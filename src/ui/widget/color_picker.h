@@ -8,7 +8,7 @@ typedef void (*color_picker_cb)(lv_event_t *event);
 
 typedef struct {
   const char *entry;
-  G_Color_ID color_id;
+  Sys_Color_ID color_id;
 } color_picker_map_table_t;
 
 lv_obj_t *Color_Picker_Create(lv_obj_t *parent, const char *map[],

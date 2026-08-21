@@ -22,7 +22,7 @@ static void draw_cb(lv_event_t *lv_event) {
     return;
   }
 
-  G_Color_t c = Global_Color_Lookup(color_table[draw_base->id1].color_id);
+  Sys_Color_t c = Sys_Color_Lookup(color_table[draw_base->id1].color_id);
   fill->color = lv_color_make(c.r, c.g, c.b);
 }
 

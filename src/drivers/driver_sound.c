@@ -11,7 +11,7 @@
 
 static i2s_chan_handle_t i2s_tx_chan;
 
-esp_err_t SoundDriver_Init(void) {
+esp_err_t Driver_Sound_Init(void) {
   i2s_chan_config_t chan_cfg =
       I2S_CHANNEL_DEFAULT_CONFIG(I2S_NUM_0, I2S_ROLE_MASTER);
   esp_err_t ret = i2s_new_channel(&chan_cfg, &i2s_tx_chan, NULL);

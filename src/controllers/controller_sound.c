@@ -1,7 +1,7 @@
 #include "controller_sound.h"
 #include "driver_sound.h"
 #include "esp_log.h"
-#include "state.h"
+#include "model.h"
 #include "types.h"
 
 // static bool sfx_playing = false;
@@ -10,36 +10,36 @@ static G_Sfx_ID current_sfx = G_SFX_NONE;
 
 void Sound_Controller_Init(void) { current_sfx = G_SFX_NONE; }
 
-void Sound_Controller_RX(OS_Event_t *os_event) {
+void Sound_Controller_RX(Sys_Event_t *sys_event) {
   // ESP_LOGI("SOUND_CONTROLLER", "event received");
 
-  switch (os_event->event_id) {
-  case OS_EVENT_SFX_SELECT: {
-    pending_sfx = (G_Sfx_ID)os_event->payload;
+  switch (sys_event->event_id) {
+  case SYS_EVENT_SFX_SELECT: {
+    pending_sfx = (G_Sfx_ID)sys_event->payload;
     // ESP_LOGI("SOUND_CTONROLLER", "rx event payload sfx_id=%d", pending_sfx);
     G_FS_File_ID sfx_file_id =
-        Global_Sfx_File_ID_Lookup((G_Sfx_ID)os_event->payload);
+        Global_Sfx_File_ID_Lookup((G_Sfx_ID)sys_event->payload);
     // ESP_LOGI("SOUND_CTONROLLER", "tx event payload sfx_file_id=%d",
     //          sfx_file_id);
 
-    OS_Event_t new_os_event = {
-        .tx_controller_id = OS_CONTROLLER_SOUND,
-        .rx_controller_id = OS_CONTROLLER_STORAGE,
-        .event_id = OS_EVENT_FS_FILE_REQ,
+    Sys_Event_t new_sys_event = {
+        .tx_controller_id = SYS_CONTROLLER_SOUND,
+        .rx_controller_id = SYS_CONTROLLER_STORAGE,
+        .event_id = SYS_EVENT_FS_FILE_REQ,
         .payload = sfx_file_id,
     };
 
-    if (xQueueSend(os_event_queue, &new_os_event, pdMS_TO_TICKS(50)) !=
+    if (xQueueSend(SYS_EVENT_QUEUE, &new_sys_event, pdMS_TO_TICKS(50)) !=
         pdTRUE) {
       ESP_LOGW("SOUND_CONTROLLER", "event queue full, dropped event id=%d",
-               new_os_event.event_id);
+               new_sys_event.event_id);
     }
 
     break;
   }
 
-  case OS_EVENT_SFX_PLAY: {
-    FILE *f = (FILE *)os_event->payload_data;
+  case SYS_EVENT_SFX_PLAY: {
+    FILE *f = (FILE *)sys_event->payload_data;
     SoundDriver_Play(f);
     current_sfx = pending_sfx;
     pending_sfx = G_SFX_NONE;

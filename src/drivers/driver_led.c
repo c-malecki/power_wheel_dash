@@ -49,7 +49,7 @@ static const led_strip_rmt_config_t rmt_config = {
     .flags.with_dma = false,
 };
 
-void set_color(led_strip_handle_t strip, uint8_t i, G_Color_ID color_id) {
+void set_color(led_strip_handle_t strip, uint8_t i, Sys_Color_ID color_id) {
   switch (color_id) {
   case G_COLOR_WHITE:
     led_strip_set_pixel(strip, i, g_color_white.r, g_color_white.g,
@@ -96,7 +96,7 @@ void set_color(led_strip_handle_t strip, uint8_t i, G_Color_ID color_id) {
   }
 }
 
-void strip_set_color(LED_Strip_ID strip_id, G_Color_ID color_id) {
+void strip_set_color(LED_Strip_ID strip_id, Sys_Color_ID color_id) {
   switch (strip_id) {
   case LED_STRIP_HEADLIGHT:
     led_strip_clear(strip_hll_handle);
@@ -125,12 +125,12 @@ void strip_set_color(LED_Strip_ID strip_id, G_Color_ID color_id) {
   }
 }
 
-// esp_err_t LEDDriver_Init(void) {
+// esp_err_t Driver_LED_Init(void) {
 //   return led_strip_new_rmt_device(&hll_config, &rmt_config,
 //   &strip_hll_handle);
 // }
 
-esp_err_t LEDDriver_Init(void) {
+esp_err_t Driver_LED_Init(void) {
   esp_err_t err =
       led_strip_new_rmt_device(&hll_config, &rmt_config, &strip_hll_handle);
   if (err != ESP_OK) {
@@ -150,11 +150,11 @@ esp_err_t LEDDriver_Init(void) {
   return led_strip_new_rmt_device(&blr_config, &rmt_config, &strip_body_handle);
 }
 
-void LEDDriver_SetHeadlights(G_Color_ID color_id) {
+void LEDDriver_SetHeadlights(Sys_Color_ID color_id) {
   strip_set_color(LED_STRIP_HEADLIGHT, color_id);
 }
 
-void LEDDriver_SetBodylights(G_Color_ID color_id) {
+void LEDDriver_SetBodylights(Sys_Color_ID color_id) {
   strip_set_color(LED_STRIP_BODYLIGHT, color_id);
 }
 

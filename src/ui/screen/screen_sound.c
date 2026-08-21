@@ -1,7 +1,7 @@
 #include "screen_sound.h"
-#include "state.h"
+#include "model.h"
 #include "types.h"
-#include "ui_helpers.h"
+#include "ui.h"
 
 static lv_obj_t *screen_obj;
 
@@ -15,7 +15,8 @@ static void screen_sound_touch_cb(lv_event_t *lv_event) {
 
   // assert(sfx_id == G_SFX_CAR_START);
 
-  // os_Event_t os_event = os_Event_Create(G_CONTROLLER_UI, G_CONTROLLER_SOUND,
+  // Sys_Event_t os_event = SYS_EVENT_CREATE(G_CONTROLLER_UI,
+  // G_CONTROLLER_SOUND,
   //                                    os_EVENT_SFX_SELECT, G_SFX_CAR_START);
 
   // ref_ui_controller_intercept_cb(&os_event);
@@ -25,7 +26,7 @@ static void screen_sound_touch_cb(lv_event_t *lv_event) {
 
 static void screen_sound_observer_cb(lv_observer_t *observer,
                                      lv_subject_t *subject) {
-  UI_Screen_ID active_screen_id = (UI_Screen_ID)lv_subject_get_int(subject);
+  Sys_Screen_ID active_screen_id = (Sys_Screen_ID)lv_subject_get_int(subject);
   lv_obj_t *new_screen = lv_observer_get_target_obj(observer);
 
   if (active_screen_id == UI_SCREEN_SOUND) {
@@ -47,6 +48,6 @@ void Sound_Screen_Init(void) {
   lv_obj_add_event_cb(test_sfx_btn, screen_sound_touch_cb, LV_EVENT_CLICKED,
                       (void *)G_SFX_CAR_START);
 
-  lv_subject_add_observer_obj(&state_active_screen_id, screen_sound_observer_cb,
-                              screen_obj, NULL);
+  lv_subject_add_observer_obj(&SYS_MODEL.active_screen_id,
+                              screen_sound_observer_cb, screen_obj, NULL);
 }

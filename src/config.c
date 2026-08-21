@@ -1,30 +1,29 @@
-#include "os_kernel.h"
+#include "config.h"
 #include "driver_display.h"
 #include "driver_led.h"
 #include "driver_sound.h"
 #include "driver_storage.h"
-// #include "esp_log.h"
 
-esp_err_t OS_Kernel_Init(void) {
-  esp_err_t err = DisplayDriver_Init();
+esp_err_t CONFIG_DRIVERS_INIT(void) {
+  esp_err_t err = Driver_Display_Init();
   if (err != ESP_OK) {
     return err;
   }
   // ESP_LOGI("OS_KERNEL", "display driver initialized");
 
-  err = StorageDriver_Init();
+  err = Driver_Storage_Init();
   if (err != ESP_OK) {
     return err;
   }
   // ESP_LOGI("OS_KERNEL", "storage driver initialized");
 
-  err = SoundDriver_Init();
+  err = Driver_Sound_Init();
   if (err != ESP_OK) {
     return err;
   }
   // ESP_LOGI("OS_KERNEL", "sound driver initialized");
 
-  err = LEDDriver_Init();
+  err = Driver_LED_Init();
   if (err != ESP_OK) {
     return err;
   }

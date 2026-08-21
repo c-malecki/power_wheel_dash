@@ -4,6 +4,6 @@
 #include "types.h"
 
 void Sound_Controller_Init(void);
-void Sound_Controller_RX(OS_Event_t *os_event);
+void Sound_Controller_RX(Sys_Event_t *sys_event);
 
 #endif // __CONTROLLER_SOUND_H_

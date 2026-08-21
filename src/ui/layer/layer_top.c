@@ -1,9 +1,9 @@
 #include "layer_top.h"
 #include "core/lv_observer.h"
 #include "misc/lv_event.h"
-#include "state.h"
+#include "model.h"
 #include "types.h"
-#include "ui_helpers.h"
+#include "ui.h"
 
 static void layer_top_touch_cb(lv_event_t *lv_event) {
   lv_event_code_t code = lv_event_get_code(lv_event);
@@ -11,10 +11,10 @@ static void layer_top_touch_cb(lv_event_t *lv_event) {
     return;
   }
 
-  UI_Screen_ID screen_id =
-      (UI_Screen_ID)(uintptr_t)lv_event_get_user_data(lv_event);
+  Sys_Screen_ID screen_id =
+      (Sys_Screen_ID)(uintptr_t)lv_event_get_user_data(lv_event);
 
-  lv_subject_set_int(&state_pending_screen_id, screen_id);
+  SYS_MODEL_SET_PROP(SYSTEM_MODEL_PROP_PENDING_SCREEN_ID, screen_id);
 }
 
 void Layer_Top_Init(void) {

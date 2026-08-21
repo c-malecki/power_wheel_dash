@@ -12,7 +12,7 @@
 #define DRIVER_SOUND_VOL_4 ? // 1_12dB
 #define DRIVER_SOUND_VOL_5 ? // 15db
 
-esp_err_t SoundDriver_Init(void);
+esp_err_t Driver_Sound_Init(void);
 void SoundDriver_Play(FILE *wav_file);
 
 #endif // __DRIVER_SOUND_H_

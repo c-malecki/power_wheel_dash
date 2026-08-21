@@ -3,6 +3,6 @@
 
 #include "esp_err.h"
 
-esp_err_t DisplayDriver_Init();
+esp_err_t Driver_Display_Init();
 
 #endif // __DRIVER_DISPLAY_H_

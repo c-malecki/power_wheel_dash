@@ -76,4 +76,6 @@
 #define AUDIO_AMP_PIN_BCLK (7)
 #define AUDIO_AMP_PIN_DIN (6)
 
+esp_err_t CONFIG_DRIVERS_INIT(void);
+
 #endif // __CONFIG_H_

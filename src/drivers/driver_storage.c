@@ -13,7 +13,7 @@ https://docs.espressif.com/projects/esp-idf/en/release-v6.1/esp32s3/api-referenc
 
 sdmmc_card_t *sd_card = NULL;
 
-esp_err_t StorageDriver_Init(void) {
+esp_err_t Driver_Storage_Init(void) {
   spi_bus_config_t spi_bus_msd = {
       .sclk_io_num = MICROSD_PIN_SPI_CLK,
       .mosi_io_num = MICROSD_PIN_SPI_MOSI,

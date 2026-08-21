@@ -4,6 +4,6 @@
 #include "types.h"
 
 void Light_Controller_Init(void);
-void Light_Controller_RX(OS_Event_t *os_event);
+void Light_Controller_RX(Sys_Event_t *sys_event);
 
 #endif // __CONTROLLER_LIGHT_H_
