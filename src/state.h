@@ -3,30 +3,17 @@
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
-#include "global.h"
 #include "lvgl.h"
-#include "ui_definitions.h"
-#include <stdint.h>
 
-extern QueueHandle_t g_event_queue;
-extern SemaphoreHandle_t g_state_mutex;
+extern QueueHandle_t os_event_queue;
+extern SemaphoreHandle_t os_state_mutex;
 
 extern lv_subject_t state_active_screen_id;
 extern lv_subject_t state_pending_screen_id;
 extern lv_subject_t state_headlight_color_id;
 extern lv_subject_t state_bodylight_color_id;
-extern lv_subject_t state_show_layer_os;
+extern lv_subject_t state_show_system_home_button;
 
-typedef struct {
-  G_Controller_ID tx_controller_id;
-  G_Controller_ID rx_controller_id;
-  G_Event_ID event_id;
-  uint32_t payload;
-  void *payload_data;
-} G_Event_t;
-
-typedef void (*g_event_ui_intercept_cb)(G_Event_t *g_event);
-
-void G_State_Init(void);
+void System_State_Init(void);
 
 #endif // __STATE_H_

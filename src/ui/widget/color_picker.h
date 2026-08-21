@@ -1,8 +1,8 @@
 #ifndef __UI_COLOR_PICKER_H_
 #define __UI_COLOR_PICKER_H_
 
-#include "global.h"
 #include "misc/lv_types.h"
+#include "types.h"
 
 typedef void (*color_picker_cb)(lv_event_t *event);
 

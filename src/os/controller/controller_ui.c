@@ -1,10 +1,10 @@
 #include "controller_ui.h"
 #include "esp_log.h"
-#include "layer_os.h"
+#include "layer_top.h"
 #include "screen_home.h"
 #include "screen_light.h"
 #include "screen_sound.h"
-#include "ui_definitions.h"
+#include "state.h"
 #include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -44,7 +44,7 @@ void UI_Controller_Init(void) {
 
   lv_subject_add_observer(&state_pending_screen_id, pending_screen_cb, NULL);
 
-  Layer_OS_Init();
+  Layer_Top_Init();
 
   Home_Screen_Init();
   Sound_Screen_Init();
@@ -54,4 +54,4 @@ void UI_Controller_Init(void) {
                           1);
 }
 
-void UI_Controller_RX(G_Event_t *g_event) {}
+void UI_Controller_RX(OS_Event_t *os_event) {}

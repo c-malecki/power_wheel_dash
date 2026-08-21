@@ -1,72 +1,4 @@
-#include "ui_definitions.h"
-#include "global.h"
-#include "misc/lv_color.h"
-#include "widgets/button/lv_button.h"
-
-/*
-  STYLES
-*/
-
-const lv_style_t ui_style_layout_grid;
-const lv_style_t ui_style_sys_button;
-const lv_style_t ui_style_sys_button_icon;
-const lv_style_t ui_style_nav_button;
-const lv_style_t ui_style_nav_button_icon;
-
-const lv_style_const_prop_t ui_style_layout_grid_props[] = {
-    LV_STYLE_CONST_WIDTH(320),
-    LV_STYLE_CONST_HEIGHT(240),
-    LV_STYLE_CONST_BORDER_WIDTH(0),
-    LV_STYLE_CONST_LAYOUT(LV_LAYOUT_GRID),
-};
-LV_STYLE_CONST_INIT(ui_style_layout_grid, ui_style_layout_grid_props);
-
-const lv_style_const_prop_t ui_style_sys_button_props[] = {
-    LV_STYLE_CONST_WIDTH(40),
-    LV_STYLE_CONST_HEIGHT(40),
-    LV_STYLE_CONST_RADIUS(LV_RADIUS_CIRCLE),
-    LV_STYLE_CONST_BORDER_WIDTH(0),
-};
-LV_STYLE_CONST_INIT(ui_style_sys_button, ui_style_sys_button_props);
-
-const lv_style_const_prop_t ui_style_sys_button_icon_props[] = {
-    LV_STYLE_CONST_TEXT_FONT(&lv_font_montserrat_14),
-    LV_STYLE_CONST_ALIGN(LV_ALIGN_CENTER),
-    // LV_STYLE_CONST_TEXT_COLOR()
-};
-LV_STYLE_CONST_INIT(ui_style_sys_button_icon, ui_style_sys_button_icon_props);
-
-const lv_style_const_prop_t ui_style_nav_button_props[] = {
-    LV_STYLE_CONST_WIDTH(70),
-    LV_STYLE_CONST_HEIGHT(70),
-    LV_STYLE_CONST_RADIUS(LV_RADIUS_CIRCLE),
-    LV_STYLE_CONST_BORDER_WIDTH(0),
-};
-LV_STYLE_CONST_INIT(ui_style_nav_button, ui_style_nav_button_props);
-
-const lv_style_const_prop_t ui_style_nav_button_icon_props[] = {
-    LV_STYLE_CONST_TEXT_FONT(&lv_font_montserrat_28),
-    LV_STYLE_CONST_ALIGN(LV_ALIGN_CENTER),
-};
-LV_STYLE_CONST_INIT(ui_style_nav_button_icon, ui_style_nav_button_icon_props);
-
-const int32_t ui_style_layout_cols_1[] = {LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
-const int32_t ui_style_layout_cols_2[] = {LV_GRID_FR(1), LV_GRID_FR(1),
-                                          LV_GRID_TEMPLATE_LAST};
-const int32_t ui_style_layout_cols_3[] = {LV_GRID_FR(1), LV_GRID_FR(1),
-                                          LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
-const int32_t ui_style_layout_cols_4[] = {LV_GRID_FR(1), LV_GRID_FR(1),
-                                          LV_GRID_FR(1), LV_GRID_FR(1),
-                                          LV_GRID_TEMPLATE_LAST};
-const int32_t ui_style_layout_cols_5[] = {LV_GRID_FR(1), LV_GRID_FR(1),
-                                          LV_GRID_FR(1), LV_GRID_FR(1),
-                                          LV_GRID_TEMPLATE_LAST};
-
-const int32_t ui_style_layout_rows_1[] = {LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
-const int32_t ui_style_layout_rows_2[] = {LV_GRID_FR(1), LV_GRID_FR(1),
-                                          LV_GRID_TEMPLATE_LAST};
-const int32_t ui_style_layout_rows_3[] = {LV_GRID_FR(1), LV_GRID_FR(1),
-                                          LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
+#include "ui_helpers.h"
 
 void set_element_bg_color(lv_obj_t *element, G_Color_ID color_id);
 
@@ -134,6 +66,67 @@ lv_obj_t *UI_Create_Button(lv_obj_t *parent, UI_Style_Element_ID style_id,
 
   return button;
 };
+
+//
+
+const lv_style_const_prop_t ui_style_layout_grid_props[] = {
+    LV_STYLE_CONST_WIDTH(320),
+    LV_STYLE_CONST_HEIGHT(240),
+    LV_STYLE_CONST_BORDER_WIDTH(0),
+    LV_STYLE_CONST_LAYOUT(LV_LAYOUT_GRID),
+};
+LV_STYLE_CONST_INIT(ui_style_layout_grid, ui_style_layout_grid_props);
+
+const int32_t ui_style_layout_cols_1[] = {LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
+const int32_t ui_style_layout_cols_2[] = {LV_GRID_FR(1), LV_GRID_FR(1),
+                                          LV_GRID_TEMPLATE_LAST};
+const int32_t ui_style_layout_cols_3[] = {LV_GRID_FR(1), LV_GRID_FR(1),
+                                          LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
+const int32_t ui_style_layout_cols_4[] = {LV_GRID_FR(1), LV_GRID_FR(1),
+                                          LV_GRID_FR(1), LV_GRID_FR(1),
+                                          LV_GRID_TEMPLATE_LAST};
+const int32_t ui_style_layout_cols_5[] = {LV_GRID_FR(1), LV_GRID_FR(1),
+                                          LV_GRID_FR(1), LV_GRID_FR(1),
+                                          LV_GRID_TEMPLATE_LAST};
+
+const int32_t ui_style_layout_rows_1[] = {LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
+const int32_t ui_style_layout_rows_2[] = {LV_GRID_FR(1), LV_GRID_FR(1),
+                                          LV_GRID_TEMPLATE_LAST};
+const int32_t ui_style_layout_rows_3[] = {LV_GRID_FR(1), LV_GRID_FR(1),
+                                          LV_GRID_FR(1), LV_GRID_TEMPLATE_LAST};
+
+//
+
+const lv_style_const_prop_t ui_style_sys_button_props[] = {
+    LV_STYLE_CONST_WIDTH(40),
+    LV_STYLE_CONST_HEIGHT(40),
+    LV_STYLE_CONST_RADIUS(LV_RADIUS_CIRCLE),
+    LV_STYLE_CONST_BORDER_WIDTH(0),
+};
+LV_STYLE_CONST_INIT(ui_style_sys_button, ui_style_sys_button_props);
+
+const lv_style_const_prop_t ui_style_sys_button_icon_props[] = {
+    LV_STYLE_CONST_TEXT_FONT(&lv_font_montserrat_14),
+    LV_STYLE_CONST_ALIGN(LV_ALIGN_CENTER),
+    // LV_STYLE_CONST_TEXT_COLOR()
+};
+LV_STYLE_CONST_INIT(ui_style_sys_button_icon, ui_style_sys_button_icon_props);
+
+const lv_style_const_prop_t ui_style_nav_button_props[] = {
+    LV_STYLE_CONST_WIDTH(70),
+    LV_STYLE_CONST_HEIGHT(70),
+    LV_STYLE_CONST_RADIUS(LV_RADIUS_CIRCLE),
+    LV_STYLE_CONST_BORDER_WIDTH(0),
+};
+LV_STYLE_CONST_INIT(ui_style_nav_button, ui_style_nav_button_props);
+
+const lv_style_const_prop_t ui_style_nav_button_icon_props[] = {
+    LV_STYLE_CONST_TEXT_FONT(&lv_font_montserrat_28),
+    LV_STYLE_CONST_ALIGN(LV_ALIGN_CENTER),
+};
+LV_STYLE_CONST_INIT(ui_style_nav_button_icon, ui_style_nav_button_icon_props);
+
+//
 
 void set_element_bg_color(lv_obj_t *element, G_Color_ID color_id) {
   lv_color_t color;

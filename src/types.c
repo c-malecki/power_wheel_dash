@@ -1,4 +1,4 @@
-#include "global.h"
+#include "types.h"
 
 const G_Color_t g_color_none = {0, 0, 0};
 const G_Color_t g_color_white = {255, 255, 255}; // 127, 127, 127

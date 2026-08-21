@@ -1,6 +1,7 @@
 #include "screen_home.h"
-#include "global.h"
 #include "state.h"
+#include "types.h"
+#include "ui_helpers.h"
 
 static lv_obj_t *screen_obj;
 
@@ -16,6 +17,7 @@ static void screen_home_touch_cb(lv_event_t *lv_event) {
   lv_subject_set_int(&state_pending_screen_id, screen_id);
 }
 
+// state_active_screen_id
 static void screen_home_observer_cb(lv_observer_t *observer,
                                     lv_subject_t *subject) {
   UI_Screen_ID active_screen_id = (UI_Screen_ID)lv_subject_get_int(subject);

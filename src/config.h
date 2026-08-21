@@ -5,6 +5,11 @@
 #include "freertos/semphr.h"
 #include <stdint.h>
 
+/*
+    This file contains conditional definitions based on build environment
+    and hardware/driver specific
+*/
+
 #ifdef DEVELOPMENT
 /* Development Configuration */
 #define LED_STRIP_MAX_LEDS (1)

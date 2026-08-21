@@ -2,7 +2,7 @@
 #define __DRIVER_LED_H_
 
 #include "esp_err.h"
-#include "global.h"
+#include "types.h"
 #include <stdbool.h>
 
 esp_err_t LEDDriver_Init(void);

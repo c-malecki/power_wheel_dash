@@ -1,7 +1,8 @@
 #include "controller_sound.h"
 #include "driver_sound.h"
 #include "esp_log.h"
-#include "global.h"
+#include "state.h"
+#include "types.h"
 
 // static bool sfx_playing = false;
 static G_Sfx_ID pending_sfx = G_SFX_NONE;
@@ -9,35 +10,36 @@ static G_Sfx_ID current_sfx = G_SFX_NONE;
 
 void Sound_Controller_Init(void) { current_sfx = G_SFX_NONE; }
 
-void Sound_Controller_RX(G_Event_t *g_event) {
+void Sound_Controller_RX(OS_Event_t *os_event) {
   // ESP_LOGI("SOUND_CONTROLLER", "event received");
 
-  switch (g_event->event_id) {
-  case G_EVENT_SFX_SELECT: {
-    pending_sfx = (G_Sfx_ID)g_event->payload;
+  switch (os_event->event_id) {
+  case OS_EVENT_SFX_SELECT: {
+    pending_sfx = (G_Sfx_ID)os_event->payload;
     // ESP_LOGI("SOUND_CTONROLLER", "rx event payload sfx_id=%d", pending_sfx);
     G_FS_File_ID sfx_file_id =
-        Global_Sfx_File_ID_Lookup((G_Sfx_ID)g_event->payload);
+        Global_Sfx_File_ID_Lookup((G_Sfx_ID)os_event->payload);
     // ESP_LOGI("SOUND_CTONROLLER", "tx event payload sfx_file_id=%d",
     //          sfx_file_id);
 
-    G_Event_t new_g_event = {
-        .tx_controller_id = G_CONTROLLER_SOUND,
-        .rx_controller_id = G_CONTROLLER_STORAGE,
-        .event_id = G_EVENT_FS_FILE_REQ,
+    OS_Event_t new_os_event = {
+        .tx_controller_id = OS_CONTROLLER_SOUND,
+        .rx_controller_id = OS_CONTROLLER_STORAGE,
+        .event_id = OS_EVENT_FS_FILE_REQ,
         .payload = sfx_file_id,
     };
 
-    if (xQueueSend(g_event_queue, &new_g_event, pdMS_TO_TICKS(50)) != pdTRUE) {
+    if (xQueueSend(os_event_queue, &new_os_event, pdMS_TO_TICKS(50)) !=
+        pdTRUE) {
       ESP_LOGW("SOUND_CONTROLLER", "event queue full, dropped event id=%d",
-               new_g_event.event_id);
+               new_os_event.event_id);
     }
 
     break;
   }
 
-  case G_EVENT_SFX_PLAY: {
-    FILE *f = (FILE *)g_event->payload_data;
+  case OS_EVENT_SFX_PLAY: {
+    FILE *f = (FILE *)os_event->payload_data;
     SoundDriver_Play(f);
     current_sfx = pending_sfx;
     pending_sfx = G_SFX_NONE;

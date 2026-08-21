@@ -2,7 +2,7 @@
 #define __DRIVER_SOUND_H_
 
 #include "esp_err.h"
-#include "global.h"
+#include "types.h"
 #include <stdio.h>
 
 #define DRIVER_SOUND_VOL_0 0

@@ -5,33 +5,33 @@
 #include "controller_ui.h"
 #include "esp_err.h"
 #include "esp_log.h"
-#include "global.h"
 #include "os_kernel.h"
 #include "state.h"
+#include "types.h"
 
 static void os_manager_task(void *arg) {
-  G_Event_t g_event;
+  OS_Event_t os_event;
   while (1) {
-    if (xQueueReceive(g_event_queue, &g_event, portMAX_DELAY)) {
+    if (xQueueReceive(os_event_queue, &os_event, portMAX_DELAY)) {
 
-      switch (g_event.rx_controller_id) {
-      case G_CONTROLLER_UI:
-        UI_Controller_RX(&g_event);
+      switch (os_event.rx_controller_id) {
+      case OS_CONTROLLER_UI:
+        UI_Controller_RX(&os_event);
         break;
 
-      case G_CONTROLLER_LIGHT:
-        Light_Controller_RX(&g_event);
+      case OS_CONTROLLER_LIGHT:
+        Light_Controller_RX(&os_event);
         break;
 
-      case G_CONTROLLER_SOUND:
-        Sound_Controller_RX(&g_event);
+      case OS_CONTROLLER_SOUND:
+        Sound_Controller_RX(&os_event);
         break;
 
-      case G_CONTROLLER_STORAGE:
-        Storage_Controller_RX(&g_event);
+      case OS_CONTROLLER_STORAGE:
+        Storage_Controller_RX(&os_event);
         break;
 
-      case G_CONTROLLER_NONE:
+      case OS_CONTROLLER_NONE:
 
         break;
       }
@@ -45,7 +45,7 @@ esp_err_t OS_Manager_Init(void) {
     return err;
   }
 
-  G_State_Init();
+  System_State_Init();
 
   UI_Controller_Init();
   ESP_LOGI("OS_MANANGER", "UI_Controller initialized");
@@ -61,6 +61,8 @@ esp_err_t OS_Manager_Init(void) {
 
   xTaskCreatePinnedToCore(os_manager_task, "os_manager_task", 8192, NULL, 10,
                           NULL, 0);
+
+  // trigger nav to home
 
   return ESP_OK;
 }

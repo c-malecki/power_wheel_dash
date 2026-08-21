@@ -1,7 +1,7 @@
 #include "screen_light.h"
-#include "global.h"
 #include "state.h"
-#include "ui_definitions.h"
+#include "types.h"
+#include "ui_helpers.h"
 
 static lv_obj_t *screen_obj;
 

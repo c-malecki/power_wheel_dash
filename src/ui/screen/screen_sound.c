@@ -1,7 +1,7 @@
 #include "screen_sound.h"
-#include "global.h"
 #include "state.h"
-#include "ui_definitions.h"
+#include "types.h"
+#include "ui_helpers.h"
 
 static lv_obj_t *screen_obj;
 
@@ -15,11 +15,11 @@ static void screen_sound_touch_cb(lv_event_t *lv_event) {
 
   // assert(sfx_id == G_SFX_CAR_START);
 
-  // G_Event_t g_event = G_Event_Create(G_CONTROLLER_UI, G_CONTROLLER_SOUND,
-  //                                    G_EVENT_SFX_SELECT, G_SFX_CAR_START);
+  // os_Event_t os_event = os_Event_Create(G_CONTROLLER_UI, G_CONTROLLER_SOUND,
+  //                                    os_EVENT_SFX_SELECT, G_SFX_CAR_START);
 
-  // ref_ui_controller_intercept_cb(&g_event);
-  // ESP_LOGI("SCREEN_SOUND_SELECT", "sending g_event with sfx_id: %s",
+  // ref_ui_controller_intercept_cb(&os_event);
+  // ESP_LOGI("SCREEN_SOUND_SELECT", "sending os_event with sfx_id: %s",
   //          "CAR START");
 }
 
