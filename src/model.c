@@ -19,7 +19,6 @@ void SYS_MODEL_INIT(void) {
 
 void SYS_MODEL_ADD_OBSERVER(System_Model_Prop_ID prop_id,
                             lv_observer_cb_t observer_cb) {
-
   switch (prop_id) {
 
   case SYSTEM_MODEL_PROP_SHOW_HOME_BUTTON: {

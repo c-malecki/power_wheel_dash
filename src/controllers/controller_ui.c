@@ -42,8 +42,8 @@ void UI_Controller_Init(void) {
   lvgl_mutex = xSemaphoreCreateMutex();
   assert(lvgl_mutex != NULL);
 
-  lv_subject_add_observer(&SYS_MODEL.pending_screen_id, pending_screen_cb,
-                          NULL);
+  SYS_MODEL_ADD_OBSERVER(SYSTEM_MODEL_PROP_PENDING_SCREEN_ID,
+                         pending_screen_cb);
 
   Layer_Top_Init();
 
